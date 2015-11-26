@@ -39,6 +39,7 @@ cast.games.spritedemo.SpritedemoGame = function(gameManager) {
    * @public {cast.receiver.games.debug.DebugUI}
    */
   this.debugUi = new cast.receiver.games.debug.DebugUI(this.gameManager_);
+  
 
   /** @private {number} */
   this.canvasWidth_ = window.innerWidth;
@@ -85,7 +86,7 @@ cast.games.spritedemo.SpritedemoGame = function(gameManager) {
 
   /** @private {!PIXI.loaders.Loader} */
   this.loader_ = new PIXI.loaders.Loader();
-  this.loader_.add('assets/icon.png');
+  this.loader_.add('assets/icon2.png');
   this.loader_.add('assets/background.jpg');
   this.loader_.once('complete', this.onAssetsLoaded_.bind(this));
 
@@ -116,7 +117,7 @@ cast.games.spritedemo.SpritedemoGame = function(gameManager) {
  * Max number of sprites allowed on screen.
  * {number}
  */
-cast.games.spritedemo.SpritedemoGame.MAX_NUM_SPRITES = 200;
+cast.games.spritedemo.SpritedemoGame.MAX_NUM_SPRITES = 20;
 
 
 /**
@@ -156,6 +157,8 @@ cast.games.spritedemo.SpritedemoGame.prototype.run = function(loadedCallback) {
     return;
   }
 
+  this.debugUi.open();
+  
   // Start running.
   this.start_();
 };
@@ -237,7 +240,7 @@ cast.games.spritedemo.SpritedemoGame.prototype.onAssetsLoaded_ = function() {
 
   for (var i = 0; i < cast.games.spritedemo.SpritedemoGame.MAX_NUM_SPRITES;
       i++) {
-    var sprite = PIXI.Sprite.fromImage('assets/icon.png');
+    var sprite = PIXI.Sprite.fromImage('assets/icon2.png');
     sprite.anchor.x = 0.5;
     sprite.anchor.y = 0.5;
     sprite.scale.x = sprite.scale.y =
@@ -342,15 +345,15 @@ cast.games.spritedemo.SpritedemoGame.prototype.update_ = function(timestamp) {
 
     // Make it steer in random direction.
     this.spriteVelocities_[i].x +=
-        cast.games.spritedemo.SpritedemoGame.getRandomInt(-2, 2);
+        cast.games.spritedemo.SpritedemoGame.getRandomInt(-6, 6);
     this.spriteVelocities_[i].y +=
-        cast.games.spritedemo.SpritedemoGame.getRandomInt(-2, 2);
+        cast.games.spritedemo.SpritedemoGame.getRandomInt(-6, 6);
 
-    if (Math.abs(this.spriteVelocities_[i].x) > 10) {
+    if (Math.abs(this.spriteVelocities_[i].x) > 50) {
       this.spriteVelocities_[i].x *= 0.8;
     }
 
-    if (Math.abs(this.spriteVelocities_[i].y) > 10) {
+    if (Math.abs(this.spriteVelocities_[i].y) > 50) {
       this.spriteVelocities_[i].y *= 0.8;
     }
 
@@ -363,7 +366,7 @@ cast.games.spritedemo.SpritedemoGame.prototype.update_ = function(timestamp) {
     var spriteY = this.sprites_[i].position.y;
 
     if (spriteX <= 0) {
-      this.spriteVelocities_[i].x *= -1;
+      this.spriteVelocities_[i].x *= -10;
       this.sprites_[i].position.x = 0;
 	  this.sprites_[i].scale.x = this.sprites_[i].scale.x *1.5;	  
 	  this.sprites_[i].scale.y = this.sprites_[i].scale.x *1.5;
@@ -373,8 +376,8 @@ cast.games.spritedemo.SpritedemoGame.prototype.update_ = function(timestamp) {
     }
 
     if (spriteY <= 0) {
-      this.spriteVelocities_[i].y *= -1;
-      this.sprites_[i].position.y = 0;
+      this.spriteVelocities_[i].y *= -10;
+      this.sprites_[i].position.y = 200;
     } else if (spriteY >= this.canvasHeight_) {
       this.spriteVelocities_[i].y *= -1;
       this.sprites_[i].position.y = this.canvasHeight_;
