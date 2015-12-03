@@ -665,7 +665,7 @@ cast.games.spritedemo.SpritedemoGame.prototype.onAssetsLoaded_ = function() {
     var sprite = PIXI.Sprite.fromImage("assets/icon.png");
     sprite.anchor.x = .5;
     sprite.anchor.y = .5;
-    sprite.scale.x = sprite.scale.y = cast.games.spritedemo.SpritedemoGame.SCALE;
+    sprite.scale.x = sprite.scale.y = cast.games.spritedemo.SpritedemoGame.SCALE*3;
     this.sprites_[i] = sprite;
     this.spriteVelocities_[i] = {x:0, y:0};
   }
