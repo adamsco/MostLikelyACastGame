@@ -1,4 +1,5 @@
-CurveGame = function() {
+CurveGame = function(gameManager) {
+	this.gameManager = gameManager;
 };
 
 CurveGame.prototype.onPlayerAvailable = function(event) {

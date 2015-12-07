@@ -10,9 +10,9 @@
 <script src="CurveGame.js"></script>
 <script>
 	var gameManager;
+	var castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
 
 	window.onload = function() {
-	  var castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
 	  var appConfig = new cast.receiver.CastReceiverManager.Config();
 	  appConfig.statusText = 'My Game is getting ready';
 	  appConfig.maxInactivity = 6000;  // 100 minutes for testing only.
@@ -23,14 +23,20 @@
 	  gameManager = new cast.receiver.games.GameManager(gameConfig);
 
 	  castReceiverManager.start(appConfig);
+	  startGame();
 	};
 	
-	game = new CurveGame();
-	gameManager.addGameManagerListener(game);
-		
+	
+	
+	var startGame = function(){
+		game = new CurveGame(gameManager);
+		gameManager.addGameManagerListener(game);
+	};
+	
+	
 	var customMessageBus = castReceiverManager.getCastMessageBus('urn:x-cast:curvefever');
 	customMessageBus.onMessage = function(event) {
-	// Handle message
+		console.log('Message received' );
 	}
 	
 	//Handle device dissconnecting from the receiver
