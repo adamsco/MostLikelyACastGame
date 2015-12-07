@@ -1,54 +1,31 @@
+<!DOCTYPE html>
 <html>
-<head>
-<body class="initial">
-	<div class="messages">
-		<h1>Watch out for the Curve</h1>
-	</div>
-</body>
+  <head>
+<!--
+Copyright 2015 Google Inc. All Rights Reserved.
 
-<script src="https://www.gstatic.com/cast/js/receiver/1.0/cast_receiver.js"></script>
-<script src="CurveGame.js"></script>
-<script>
-	var gameManager;
-	var castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-	window.onload = function() {
-	console.log('On load' );
-	  var appConfig = new cast.receiver.CastReceiverManager.Config();
-	  appConfig.statusText = 'My Game is getting ready';
-	  appConfig.maxInactivity = 6000;  // 100 minutes for testing only.
+    http://www.apache.org/licenses/LICENSE-2.0
 
-	  var gameConfig = new cast.receiver.games.GameManagerConfig();
-	  gameConfig.applicationName = 'Watch out for the Curve';
-	  gameConfig.maxPlayers = 10;
-	  gameManager = new cast.receiver.games.GameManager(gameConfig);
-
-	  castReceiverManager.start(appConfig);
-	  startGame();
-	};
-	
-	
-	
-	var startGame = function(){
-		game = new CurveGame(gameManager);
-		gameManager.addGameManagerListener(game);
-		console.log('Game started' );
-	};
-	
-	
-	var customMessageBus = castReceiverManager.getCastMessageBus('urn:x-cast:curvefever');
-	customMessageBus.onMessage = function(event) {
-		console.log('Message received' );
-	}
-	
-	//Handle device dissconnecting from the receiver
-	window.castReceiverManager.onSenderDisconnected = function(event) {
-		if(window.castReceiverManager.getSenders().length == 0 &&
-			event.reason == cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER) {
-			window.close();
-		}
-	}
-	
-</script>
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+    <title>Spritedemo</title>
+    <style>
+      body {
+          margin: 0px;
+          overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Load all of our scripts -->
+    <script src="spritedemo_script_loader.js"></script>
+  </body>
 </html>
