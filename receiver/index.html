@@ -21,8 +21,10 @@
 var initialize = function() {
   var castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
   var appConfig = new cast.receiver.CastReceiverManager.Config();
-
-  appConfig.statusText = 'Spritedemo';
+	
+	console.log('Hej hopp!');
+	
+  appConfig.statusText = 'Watch out for the Curve';
   // In production, use the default maxInactivity instead of using this.
   appConfig.maxInactivity = 6000;
 
@@ -43,9 +45,9 @@ var initialize = function() {
 	console.log('Game started' );
 
   castReceiverManager.start(appConfig);
-  game.run(function() {
+  /*game.run(function() {
     console.log('Game running.');
-  });
+  });*/
 };
 
 if (document.readyState === 'complete') {
