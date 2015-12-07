@@ -1,66 +1,29 @@
 <html>
 <head>
+	<link rel="stylesheet" type="text/css" href="../css/receiver.css" />
 <body class="initial">
 	<div class="messages">
-		<h1>Watch out for the Curve</h1>
+		<h1>Waiting for Messages...</h1>
 	</div>
 </body>
 
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 <script src="https://www.gstatic.com/cast/js/receiver/1.0/cast_receiver.js"></script>
-<script src="CurveGame.js"></script>
 <script>
-	
-	
-	var game = null;
-
-
-/**
- * Main entry point. This is not meant to be compiled so suppressing missing
- * goog.require checks.
- */
-var initialize = function() {
-  var castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
-  var appConfig = new cast.receiver.CastReceiverManager.Config();
-	
-	console.log('Hej hopp!');
-	
-  appConfig.statusText = 'Watch out for the Curve';
-  // In production, use the default maxInactivity instead of using this.
-  appConfig.maxInactivity = 6000;
-
-  // Create the game before starting castReceiverManager to make sure any extra
-  // cast namespaces can be set up.
-  /** @suppress {missingRequire} */
-  var gameConfig = new cast.receiver.games.GameManagerConfig();
-  gameConfig.applicationName = 'Spritedemo';
-  gameConfig.maxPlayers = 10;
-
-  /** @suppress {missingRequire} */
-  var gameManager = new cast.receiver.games.GameManager(gameConfig);
-
-  /** @suppress {missingRequire} */
-  game = new CurveGame(gameManager);
-  
-  gameManager.addGameManagerListener(game);
-	console.log('Game started' );
-
-  castReceiverManager.start(appConfig);
-  /*game.run(function() {
-    console.log('Game running.');
-  });*/
-};
-
-if (document.readyState === 'complete') {
-  initialize();
-} else {
-  /** Main entry point. */
-  window.onload = initialize;
-}
-
-	
-	
-
-	
+	$(function() {
+		var receiver = new cast.receiver.Receiver('*** YOUR APP ID ****', ['*** YOUR NAMESPACE ***']),
+			channelHandler = new cast.receiver.ChannelHandler('*** YOUR NAMESPACE ***'),
+			$messages = $('.messages'),
+			$body = $('body');
+		
+		channelHandler.addChannelFactory(
+			receiver.createChannelFactory('*** YOUR NAMESPACE ***'));
+		receiver.start();
+		channelHandler.addEventListener(cast.receiver.Channel.EventType.MESSAGE, onMessage.bind(this));
+		function onMessage(event) {
+			$messages.html(event.message.type);
+		}
+	});
 </script>
 
 </html>
