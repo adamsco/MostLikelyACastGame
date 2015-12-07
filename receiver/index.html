@@ -13,6 +13,7 @@
 	var castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
 
 	window.onload = function() {
+	console.log('On load' );
 	  var appConfig = new cast.receiver.CastReceiverManager.Config();
 	  appConfig.statusText = 'My Game is getting ready';
 	  appConfig.maxInactivity = 6000;  // 100 minutes for testing only.
@@ -31,6 +32,7 @@
 	var startGame = function(){
 		game = new CurveGame(gameManager);
 		gameManager.addGameManagerListener(game);
+		console.log('Game started' );
 	};
 	
 	

@@ -13,6 +13,7 @@ CurveGame.prototype.onPlayerDropped = function() {};
 CurveGame.prototype.onPlayerQuit = function() {};
 CurveGame.prototype.onPlayerDataChanged = function(event) {
 	//Updates from control goes here, I think
+	console.log('INput from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
 };
 CurveGame.prototype.onGameStatusTextChanged = function() {};
 CurveGame.prototype.onGameMessageReceived = function() {};
