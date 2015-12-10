@@ -12,11 +12,17 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	
 	
 	if(gameManager.getLobbyState()==cast.receiver.games.LobbyState.CLOSED){
-		if(availablePlayers==1){//PLayer is first player in game so open lobby
-			gameManager.updateLobbyState(cast.receiver.games.LobbyState.OPEN, "Hej hopp gummisnopp");
-		}else{//A player tries to join when a game is running so tell the playe to wait
+		if(availablePlayers==1){//Player is first player in game so open lobby
+			gameManager.updateLobbyState(cast.receiver.games.LobbyState.OPEN, true);
+			gameManager.broadcastGameManagerStatus();
+		}else{//A player tries to join when a game is running so tell the player to wait
 			//Send message to player that it needs to wait for current game to end and join the next
 		}		
+	}
+	
+	if(gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){
+		//Send message to player that it has joined the lobby
+		console.log('Lobby is open');
 	}
 	
 };
@@ -53,5 +59,7 @@ function checkIfAllReady(){
 		}
 	}
 	gameManager.broadcastGameManagerStatus();
+	//Start game here
+	//Tell all players that the game has started
 };
 
