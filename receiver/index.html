@@ -39,6 +39,7 @@ limitations under the License.
   <body>
 	<DIV id="message">Talk to me</DIV>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+	<script src="CurveGame.js"></script>
     <script type="text/javascript">
       window.onload = function() {
         cast.receiver.logger.setLevelValue(0);
@@ -85,7 +86,23 @@ limitations under the License.
           // sender message listener will be invoked
           window.messageBus.send(event.senderId, event.data);
         }
+		
+		
+		
+		var gameConfig = new cast.receiver.games.GameManagerConfig();
+		gameConfig.applicationName = 'Curve Fever';
+		gameConfig.maxPlayers = 10;
 
+		/** @suppress {missingRequire} */
+		var gameManager = new cast.receiver.games.GameManager(gameConfig);
+
+		/** @suppress {missingRequire} */
+		game = new CurveGame(gameManager);
+
+		gameManager.addGameManagerListener(game);
+		console.log('Game started' );
+		
+		
         // initialize the CastReceiverManager with an application status message
         window.castReceiverManager.start({statusText: "Application is starting"});
         console.log('Receiver Manager started');
