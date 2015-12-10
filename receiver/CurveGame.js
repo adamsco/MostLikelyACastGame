@@ -1,7 +1,7 @@
 
 
 function CurveGame(gameManager) {
-	this.gameManager = gameManager;
+	gameManager = gameManager;
 	console.log('game manager set');
 };
 
