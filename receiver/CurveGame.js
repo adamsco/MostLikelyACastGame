@@ -2,6 +2,7 @@
 
 function CurveGame(gameManager) {
 	this.gameManager = gameManager;
+	console.log('game manager set');
 };
 
 CurveGame.prototype.onPlayerAvailable = function(event) {
