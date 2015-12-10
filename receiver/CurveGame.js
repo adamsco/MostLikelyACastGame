@@ -54,7 +54,7 @@ function checkIfAllReady(){
 	var availablePlayers = gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE, true);
 	
 	if(availablePlayers.length == 0 && readyPlayers > 1){ //If no player is available and we have 2 or more ready players we can start the game
-		for (var i = 0; i <h; readyPlayers.length; i++) {
+		for (var i = 0; i < readyPlayers.length; i++) {
 			gameManager.updatePlayerState(readyPlayers.playerId,cast.receiver.games.PlayerState.PLAYING, true);
 		}
 	}
