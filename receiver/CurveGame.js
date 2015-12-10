@@ -1,12 +1,13 @@
-
+var gameManager = null;
 
 function CurveGame(gameManager) {
 	gameManager = gameManager;
-	console.log('game manager set');
+	console.log('game manager set' + gameManager);
 };
 
 CurveGame.prototype.onPlayerAvailable = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is available');
+	console.log('game manager in available' + gameManager);
 	//If first player open lobby 
 	//Else check if lobby is open, if it is then add player to the lobby if it is not then tell player to wait for the next round
 	var availablePlayers = gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE, true);
