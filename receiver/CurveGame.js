@@ -1,6 +1,6 @@
 
 
-CurveGame = function(gameManager) {
+function CurveGame(gameManager) {
 	this.gameManager = gameManager;
 };
 
