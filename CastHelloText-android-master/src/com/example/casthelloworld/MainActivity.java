@@ -30,6 +30,11 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.cast.games.GameManagerClient;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -59,7 +64,7 @@ import java.util.ArrayList;
 /**
  * Main activity to send messages to the receiver.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -78,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mWaitingForReconnect;
     private String mSessionId;
     private GameManagerClient mGameManagerClient;
+    private SensorManager sManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(
                 getResources().getColor(android.R.color.transparent)));
+
+
+        sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         // When the user clicks on the button, use Android voice recognition to
         // get text
@@ -142,12 +151,15 @@ public class MainActivity extends AppCompatActivity {
         // Start media router discovery
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+        sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),SensorManager.SENSOR_DELAY_FASTEST);
+
     }
 
     @Override
     protected void onStop() {
-        // End media router discovery
+        // @TODO stop gamemanagercallback
         mMediaRouter.removeCallback(mMediaRouterCallback);
+        sManager.unregisterListener(this);
         super.onStop();
     }
 
@@ -169,6 +181,25 @@ public class MainActivity extends AppCompatActivity {
         // Set the MediaRouteActionProvider selector for device discovery.
         mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
         return true;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (sensorEvent.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
+        {
+            return;
+        }
+
+        Log.d("SENSORCHANGED", "Roll :"+ Float.toString(sensorEvent.values[2]) +"\n"+
+                "Pitch :"+ Float.toString(sensorEvent.values[1]) +"\n"+
+                "Yaw :"+ Float.toString(sensorEvent.values[0]));
+
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
     }
 
     /**
