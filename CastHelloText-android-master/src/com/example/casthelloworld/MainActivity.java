@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private String mSessionId;
     private GameManagerClient mGameManagerClient;
     private SensorManager sManager;
+    private String lastVal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         actionBar.setBackgroundDrawable(new ColorDrawable(
                 getResources().getColor(android.R.color.transparent)));
 
-
+        lastVal = "";
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         // When the user clicks on the button, use Android voice recognition to
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Start media router discovery
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
-        sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),SensorManager.SENSOR_DELAY_FASTEST);
+        sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
 
     }
 
@@ -185,15 +186,45 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+
         if (sensorEvent.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
         {
             return;
         }
+        float x = sensorEvent.values[2];
+        //Log.d("X val : ", "" + sensorEvent.values[2]);
 
+
+        if(x > 0.3 && !lastVal.equals("One")){
+            Log.d("One", "" + x);
+            lastVal = "One";
+        }else if(x < 0.3 && x > 0.25 &&  !lastVal.equals("Two")){
+            Log.d("Two", "" + x);
+            lastVal = "Two";
+        }else if(x < 0.25 && x > 0.2 && !lastVal.equals("Three")){
+            Log.d("Three", "" + x);
+            lastVal = "Three";
+        }else if(x < 0.2 && x > 0.15 && !lastVal.equals("Four")){
+            Log.d("Four", "" + x);
+            lastVal = "Four";
+        } else if(x < 0.15 && x > 0.1 && !lastVal.equals("Five")){
+            Log.d("Five", "" + x);
+            lastVal = "Five";
+        } else if(x < 0.1 && x > 0.05 && !lastVal.equals("Six")){
+            Log.d("Six", "" + x);
+            lastVal = "Six";
+        }  else if(x < 0.05 && x > 0 && !lastVal.equals("Seven")){
+            Log.d("Seven", "" + x);
+            lastVal = "Seven";
+        } else if(x < 0 && !lastVal.equals("Eight")){
+            Log.d("Eight", "" + x);
+            lastVal = "Eight";
+        }
+/*
         Log.d("SENSORCHANGED", "Roll :"+ Float.toString(sensorEvent.values[2]) +"\n"+
                 "Pitch :"+ Float.toString(sensorEvent.values[1]) +"\n"+
                 "Yaw :"+ Float.toString(sensorEvent.values[0]));
-
+*/
 
     }
 
