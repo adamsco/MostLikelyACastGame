@@ -61,7 +61,7 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	var playerNumber = readyPlayers.indexOf(event.playerInfo);
 	
 	console.log('Player number: '+playerNumber);
-	console.log('Turn Value: '+turnValue);
+	console.log('Turn Value: '+JSON.stringify(turnValue));
 	
 	inputFromMobile(turnValue, playerNumber);
 };
