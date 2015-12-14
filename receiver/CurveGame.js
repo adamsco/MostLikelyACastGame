@@ -58,7 +58,7 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	console.log('Input from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
 	var message = event.requestExtraMessageData;
 	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
-	var playerNumber = event.playerInfo.playerId;
+	var playerNumber = event.playerInfo.playerId.substring(2,1);
 	
 	console.log('Player number: '+playerNumber);
 	
