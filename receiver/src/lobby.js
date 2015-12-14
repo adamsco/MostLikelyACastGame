@@ -19,4 +19,5 @@ function joinGame(playerName){
   newCell3.appendChild(document.createTextNode("No"));
 
   nrPlayers ++;
+  console.log('player added to lobby');
 }
