@@ -1,0 +1,58 @@
+body{
+   background-color: #000;
+   background-image: url("../img/curve_background.png");
+   background-repeat: no-repeat;
+   background-position: right;
+}
+#board{
+   font-size: 1rem;
+   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+   border-collapse: collapse;
+   border-spacing: 0;
+   width: 40vw;
+   display: table;
+   margin-left: 30vw;
+}
+#lobby-options{
+   color: #FFF;
+   margin-left: 30vw;
+   font-size: 1.5rem;
+   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+tbody{
+   display: table-row-group;
+   vertical-align: middle;
+   border-color: inherit;
+}
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+}
+#td1{
+   width: 80%;
+   text-align: left;
+}
+#td2{
+   width: 10%;
+
+}
+#td3{
+   width: 10%;
+   color: red !important;
+   text-align: center !important;
+}
+
+#board th {
+    padding-top: 11px;
+    padding-bottom: 11px;
+    background-color: white !important;
+    color: #000 !important;
+}
+#board td, #board th {
+    border: 1px solid #CCC;
+    text-align: left;
+    padding: 8px;
+    color: #FFF;
+    background-color: #000;
+}
