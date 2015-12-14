@@ -56,15 +56,13 @@ CurveGame.prototype.onGameStatusTextChanged = function() {};
 CurveGame.prototype.onGameMessageReceived = function(event) {
 	//Updates from control goes here, I think
 	console.log('Input from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
-	var turnValue = event.requestExtraMessageData;
+	var message = event.requestExtraMessageData;
 	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
-	var playerNumber = readyPlayers.indexOf(event.playerInfo);
+	var playerNumber = event.playerInfo.playerId;
 	
 	console.log('Player number: '+playerNumber);
-	console.log('Turn Value: '+JSON.stringify(turnValue));
-	console.log('Turn Value 2: '+turnValue.direction);
 	
-	inputFromMobile(turnValue, playerNumber);
+	inputFromMobile(message.direction, playerNumber);
 };
 CurveGame.prototype.onGameDataChanged = function() {};
 CurveGame.prototype.onGameLoading = function() {};
@@ -83,6 +81,9 @@ CurveGame.prototype.checkIfAllReady = function(){
 	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
 	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE);
 	
+	console.log('ready players: '+ readyPLayers);
+	console.log('available players' + availablePlayers);
+	
 	if(availablePlayers.length == 0 && readyPlayers >= 1){ //If no player is available and we have 2 or more ready players we can start the game
 		for (var i = 0; i < readyPlayers.length; i++) {
 			this.gameManager.updatePlayerState(readyPlayers.playerId,cast.receiver.games.PlayerState.PLAYING, true);
@@ -90,6 +91,7 @@ CurveGame.prototype.checkIfAllReady = function(){
 		
 		//Start game here
 		gameInit();
+		console.log('Game started');
 	}
 	this.gameManager.broadcastGameManagerStatus();
 };
