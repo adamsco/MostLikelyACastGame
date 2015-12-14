@@ -8,6 +8,9 @@ function CurveGame(gameManager) {
 CurveGame.prototype.onPlayerAvailable = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is available');
 	console.log('game manager in available' + this.gameManager);
+	
+	
+	
 	//If first player open lobby 
 	//Else check if lobby is open, if it is then add player to the lobby if it is not then tell player to wait for the next round
 	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE, true);
@@ -23,6 +26,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	}
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){
+		//add player to the lobby
 		//Send message to player that it has joined the lobby
 		console.log('Lobby is open');
 	}
@@ -30,19 +34,37 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 };
 
 CurveGame.prototype.onPlayerReady = function(event) {
+	console.log('Player ' + event.playerInfo.playerId + ' is ready');
 	//Check if everyone is ready
 	checkIfAllReady();
 };
 CurveGame.prototype.onPlayerIdle = function() {};
-CurveGame.prototype.onPlayerPlaying = function() {};
-CurveGame.prototype.onPlayerDropped = function() {};
-CurveGame.prototype.onPlayerQuit = function() {};
+CurveGame.prototype.onPlayerPlaying = function(event) {
+	// Tell player game is about to start
+};
+CurveGame.prototype.onPlayerDropped = function(event) {
+	//Remove player from lobby or game
+};
+CurveGame.prototype.onPlayerQuit = function(event) {
+	//Remove player from lobby or game
+};
 CurveGame.prototype.onPlayerDataChanged = function(event) {
-	//Updates from control goes here, I think
-	console.log('Input from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
+	
+	
 };
 CurveGame.prototype.onGameStatusTextChanged = function() {};
-CurveGame.prototype.onGameMessageReceived = function() {};
+CurveGame.prototype.onGameMessageReceived = function(event) {
+	//Updates from control goes here, I think
+	console.log('Input from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
+	var turnValue = event.requestExtraMessageData;
+	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING, true);
+	var playerNumber = readyPlayers.indexOf(event.playerInfo);
+	
+	console.log('Player number: '+playerNumber);
+	console.log('Turn Value: '+turnValue);
+	
+	inputFromMobile(turnValue, playerNumber);
+};
 CurveGame.prototype.onGameDataChanged = function() {};
 CurveGame.prototype.onGameLoading = function() {};
 CurveGame.prototype.onGameRunning = function() {};
@@ -62,6 +84,6 @@ function checkIfAllReady(){
 	}
 	this.gameManager.broadcastGameManagerStatus();
 	//Start game here
-	//Tell all players that the game has started
+	gameInit();
 };
 

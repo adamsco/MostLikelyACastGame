@@ -31,7 +31,7 @@ var bunny;
 var view;
 var ctx;
 var isRunning = true;
-gameInit();
+//gameInit();
 
 function gameInit(){
    createPlayer();
@@ -71,6 +71,11 @@ function inputController() {
       playerList[1].rotation += rs;//p2right
    }
 }
+
+function inputFromMobile(turnValue, playerNumber){
+	playerList[playerNumber].rotation += turnValue; 
+} 
+
 function resize() {
    // Determine which screen dimension is most constrained
    ratio = Math.min(window.innerWidth/GAME_WIDTH,

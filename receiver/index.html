@@ -18,29 +18,19 @@ limitations under the License.
   <head>
     <style type="text/css">
 	  body {
-	    overflow:hidden;
-	  }
-      div{
-	    height:720PX;
-	    width:1280PX;
-	    text-align:center;
-	    border:0px solid silver;
-	    display: table-cell;
-	    vertical-align:middle;
-	    color:#FFFFFF;
-	    background-color:#000000;
-	    font-weight:bold;
-	    font-family:Verdana, Geneva, sans-serif;
-	    font-size:40px;
-	}
+			margin: 0;
+			padding: 0;
+			background-color: #FFF;
+		}
     </style>
-    <title>Cast Hello Text</title>
+    <title>Cast Hello Text</title>	
+	<script src="pixi_master/bin/pixi.min.js"></script>
   </head>
   <body>
-	<DIV id="message">Talk to me</DIV>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
 	<script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/games/1.0.0/cast_games_receiver.js"></script>
 	<script src="CurveGame.js"></script>
+	<script src = "src/game.js"></script>
     <script type="text/javascript">
       window.onload = function() {
         cast.receiver.logger.setLevelValue(0);
