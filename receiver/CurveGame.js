@@ -51,6 +51,9 @@ CurveGame.prototype.onPlayerReady = function(event) {
 CurveGame.prototype.onPlayerIdle = function() {};
 CurveGame.prototype.onPlayerPlaying = function(event) {
 	// Tell player game is about to start
+	var playerId = event.playerInfo.playerId;
+	var message = { DEATH: 'DEATH' };
+	gameManager.sendGameMessageToPlayer(playerId, message);
 };
 CurveGame.prototype.onPlayerDropped = function(event) {
 	//Remove player from lobby or game
