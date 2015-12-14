@@ -36,7 +36,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 CurveGame.prototype.onPlayerReady = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is ready');
 	//Check if everyone is ready
-	checkIfAllReady();
+	this.checkIfAllReady();
 };
 CurveGame.prototype.onPlayerIdle = function() {};
 CurveGame.prototype.onPlayerPlaying = function(event) {
@@ -73,7 +73,7 @@ CurveGame.prototype.onGameShowingInfoScreen = function() {};
 CurveGame.prototype.onLobbyOpen = function() {};
 CurveGame.prototype.onLobbyClosed = function() {};
 
-function checkIfAllReady(){
+CurveGame.prototype.checkIfAllReady = function(){
 	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
 	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE);
 	
