@@ -61,6 +61,7 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	var playerNumber = parseInt(event.playerInfo.playerId.substring(2,1));
 	
 	console.log('Player number: '+playerNumber);
+	console.log('Turning value '+message.direction);
 	
 	inputFromMobile(message.direction, playerNumber);
 };
