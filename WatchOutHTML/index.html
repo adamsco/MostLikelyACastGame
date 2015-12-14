@@ -9,12 +9,31 @@
 			background-color: #FFF;
 		}
 	</style>
+
 	<script src="pixi_master/bin/pixi.min.js"></script>
+	<script src = "src/game.js">	</script>
+	<script src = "src/lobby.js"> </script>
+	<link rel="stylesheet" type="text/css" href="style/curvestyle.css">
+
 </head>
 <body>
-	<div id="lobby">Hello lobby</div>
-	<div id="game" style="display: none;">
-		<script src = "src/game.js">	</script>
+	<button type="button" onclick="switchState()">Start!</button>
+	<div id="lobby">
+		<button type="button" onclick="joinGame('Queen B')">JoinG</button>
+
+		<img style="margin-left: 0.3vw;" src="img/Logo.png" alt="Watch out for the curve" />
+		<p id="lobby-options">Goal: 25p </p>
+		<p id="lobby-options">Powerups: None</p>
+		<table id="board">
+			<tbody>
+				<tr>
+					<th id="td1">Name</th>
+					<th id="td2">Color</th>
+					<th id="td3">Ready</th>
+				</tr>
+			</tbody>
+		</table>
+
 	</div>
 	</body>
 </html>
