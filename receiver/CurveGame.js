@@ -94,7 +94,7 @@ CurveGame.prototype.checkIfAllReady = function(){
 		//Start game here
 		
 		console.log('Game started');
-		gameInit();
+		switchState();
 		
 	}
 	this.gameManager.broadcastGameManagerStatus();
