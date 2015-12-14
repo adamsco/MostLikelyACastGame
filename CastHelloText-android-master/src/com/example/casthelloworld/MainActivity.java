@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float[] orientationVals;
     private JSONObject directionMessage;
     private Vibrator v;
+    private String playerId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         m_orientation = new float[4];
         orientationVals = new float[3];
         directionMessage = new JSONObject();
+        playerId = "";
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View v) {
                 startVoiceRecognitionActivity();
+                mGameManagerClient.sendPlayerReadyRequest(null);
             }
         });
 
@@ -240,34 +243,104 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
         if(Roll < -85 && Roll > -95 && lastVal != 0.0f){
-            Log.d("Middle: ", "" + Roll);
+           // Log.d("Middle: ", "" + Roll);
             lastVal = 0.0f;
             try {
                 directionMessage.put("direction", (double) lastVal);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mGameManagerClient.sendGameMessage("bgrn", directionMessage);
-        }else if(Roll <= -95 && lastVal != -1.0f){
-            Log.d("Left", "" + Roll);
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll <= -95 && Roll > -105 && lastVal != -0.2f){
+           // Log.d("Left", "" + Roll);
+            lastVal = -0.2f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll >= -85 && Roll < -75 && lastVal != 0.2f) {
+           // Log.d("Right", "" + Roll);
+            lastVal = 0.2f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll <= -105 && Roll > -115 && lastVal != -0.4f){
+            // Log.d("Left", "" + Roll);
+            lastVal = -0.4f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll >= -75 && Roll < -65 && lastVal != 0.4f) {
+            // Log.d("Right", "" + Roll);
+            lastVal = 0.4f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll <= -115 && Roll > -125 && lastVal != -0.6f){
+            // Log.d("Left", "" + Roll);
+            lastVal = -0.6f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll >= -65 && Roll < -55 && lastVal != 0.6f) {
+            // Log.d("Right", "" + Roll);
+            lastVal = 0.6f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll <= -125 && Roll > -135 && lastVal != -0.8f){
+            // Log.d("Left", "" + Roll);
+            lastVal = -0.8f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll >= -55 && Roll < -45 && lastVal != 0.8f) {
+            // Log.d("Right", "" + Roll);
+            lastVal = 0.8f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll <= -135 && lastVal != -1.0f && lastVal != 1.0f){
+            // Log.d("Left", "" + Roll);
             lastVal = -1.0f;
             try {
                 directionMessage.put("direction", (double) lastVal);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mGameManagerClient.sendGameMessage("bgrn", directionMessage);
-            v.vibrate(400);
-        }else if(Roll >= -85 && lastVal != 1.0f) {
-            Log.d("Right", "" + Roll);
+            mGameManagerClient.sendGameMessage(directionMessage);
+        }else if(Roll >= -45 && lastVal != 1.0f && lastVal != -1.0f) {
+            // Log.d("Right", "" + Roll);
             lastVal = 1.0f;
             try {
                 directionMessage.put("direction", (double) lastVal);
-                Log.d("X val : ", "HELLOEOWDKOWDKODWK");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            mGameManagerClient.sendGameMessage("bgrn", directionMessage);
+            mGameManagerClient.sendGameMessage(directionMessage);
         }
 //        Log.d("X val : ", "" + sensorEvent.values[0]);
 
@@ -496,8 +569,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             public void onResult(GameManagerClient.GameManagerInstanceResult result) {
                                 mGameManagerClient = result.getGameManagerClient();
                                 Log.d(TAG, "GameManagerClient onResult: " + result.getGameManagerClient());
-                                mGameManagerClient.sendPlayerAvailableRequest("bgrn", null);
-                                mGameManagerClient.sendPlayerReadyRequest("bgrn", null);
+                                mGameManagerClient.sendPlayerAvailableRequest(null, null);
                                 mGameManagerClient.setListener(new DebuggerListener());
                             }
                         });
@@ -529,6 +601,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 String text = currentState.getGameData() != null
                         ? currentState.getGameData().toString() : "";
                 Log.d(TAG, "onGameDataChanged: " + text);
+                //if(text=="DEATH"){
+                    v.vibrate(400);
+                //}
                 //mTextViewGameData.setText(text);
             }
         }
