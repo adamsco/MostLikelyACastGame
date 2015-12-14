@@ -27,10 +27,26 @@ limitations under the License.
 	<script src="pixi_master/bin/pixi.min.js"></script>
   </head>
   <body>
+	<div id="lobby">
+		<img style="margin-left: 0.3vw;" src="img/Logo.png" alt="Watch out for the curve" />
+		<p id="lobby-options">Goal: 25p </p>
+		<p id="lobby-options">Powerups: None</p>
+		<table id="board">
+			<tbody>
+				<tr>
+					<th id="td1">Name</th>
+					<th id="td2">Color</th>
+					<th id="td3">Ready</th>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
     <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
 	<script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/games/1.0.0/cast_games_receiver.js"></script>
 	<script src="CurveGame.js"></script>
 	<script src = "src/game.js"></script>
+	<script src = "src/lobby.js"> </script>
     <script type="text/javascript">
       window.onload = function() {
         cast.receiver.logger.setLevelValue(0);

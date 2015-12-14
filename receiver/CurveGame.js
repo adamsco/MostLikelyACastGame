@@ -27,6 +27,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){
 		//add player to the lobby
+		joinGame('Player' + event.playerINfo.playerId);
 		//Send message to player that it has joined the lobby
 		console.log('Lobby is open');
 	}
@@ -85,7 +86,7 @@ CurveGame.prototype.checkIfAllReady = function(){
 	console.log('ready players: '+ readyPlayers.length);
 	console.log('available players' + availablePlayers.lenght);
 	
-	if(availablePlayers.length == 0 && readyPlayers >= 1){ //If no player is available and we have 2 or more ready players we can start the game
+	if(availablePlayers==undefined && readyPlayers >= 1){ //If no player is available and we have 2 or more ready players we can start the game
 		for (var i = 0; i < readyPlayers.length; i++) {
 			this.gameManager.updatePlayerState(readyPlayers.playerId,cast.receiver.games.PlayerState.PLAYING, true);
 		}
@@ -93,8 +94,9 @@ CurveGame.prototype.checkIfAllReady = function(){
 		//Start game here
 		
 		console.log('Game started');
+		gameInit();
+		
 	}
 	this.gameManager.broadcastGameManagerStatus();
-	gameInit();
 };
 
