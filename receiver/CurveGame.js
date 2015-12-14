@@ -14,7 +14,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	//If first player open lobby 
 	//Else check if lobby is open, if it is then add player to the lobby if it is not then tell player to wait for the next round
 	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE);
-	
+	console.log('Vailable players: ' + availablePlayers);
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.CLOSED){
 		if(availablePlayers==1){//Player is first player in game so open lobby
