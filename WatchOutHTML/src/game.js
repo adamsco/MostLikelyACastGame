@@ -4,7 +4,8 @@ GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
 var ms = 2.5;
 var rs = 0.1;
-var scaleTrail = 0.8;
+var scaleTrail = 0.4;
+var scalePlayer = 0.5;
 var enabled = false;
 // create an new instance of a pixi stage
 var stage;
@@ -78,37 +79,46 @@ function gameStop(){
 
 }
 function createPlayer(){
-   var tempPlayer = new PIXI.Sprite.fromImage('pixi_master/test/textures/bunny.png');
-   playerList.push(tempPlayer);
-   playerList[playerList.length-1].anchor.x = 0.5;
-   playerList[playerList.length-1].anchor.y = 0.5;
-   playerList[playerList.length-1].playerColor =   parseCol(colorTable[playerList.length-1], true);
-   playerList[playerList.length-1].tint = playerList[playerList.length-1].playerColor;
-   playerList[playerList.length-1].position.x = (Math.random() * GAME_WIDTH);
-   playerList[playerList.length-1].position.y = (Math.random() * GAME_HEIGHT*0.5)+GAME_HEIGHT*0.5;
-   stage.addChild(playerList[playerList.length-1]);
+   var text = new PIXI.Sprite.fromImage('pixi_master/test/textures/bunny.png');
+   var player ={
+      texture: text,
+      turn: 0,
+      score: 0
+   };
+   playerList.push(player);
+   playerList[playerList.length-1].texture.scale.x = scalePlayer;
+   playerList[playerList.length-1].texture.scale.y = scalePlayer;
+   playerList[playerList.length-1].texture.anchor.x = 0.5;
+   playerList[playerList.length-1].texture.anchor.y = 0.5;
+   playerList[playerList.length-1].texture.playerColor =   parseCol(colorTable[playerList.length-1], true);
+   playerList[playerList.length-1].texture.tint = playerList[playerList.length-1].texture.playerColor;
+   playerList[playerList.length-1].texture.position.x = (Math.random() * GAME_WIDTH);
+   playerList[playerList.length-1].texture.position.y = (Math.random() * GAME_HEIGHT*0.5)+GAME_HEIGHT*0.5;
+
+   stage.addChild(playerList[playerList.length-1].texture);
    alive.push(true);
 }
 
 function inputController() {
    if(event.keyCode == 37 && isRunning) {
-      playerList[0].rotation -= rs;
+      playerList[0].turn = -1;
    }
    else if(event.keyCode == 39 && isRunning) {
-      playerList[0].rotation += rs;
+      playerList[0].turn = 1;
    }
    else if(event.keyCode == 38){
-         console.log(playerList[0].position.x);
-         console.log(playerList[0].position.y);
+         console.log(playerList[0].texture.position.x);
+         console.log(playerList[0].texture.position.y);
+         playerList[0].turn = 0;
    }
    else if(event.keyCode ==40){
-      console.log(playerList[0].rotation);
+      console.log(playerList[0].texture.rotation);
    }
    else if(event.keyCode == 65 && isRunning) {
-      playerList[1].rotation -= rs;//p2 left
+      playerList[1].texture.rotation -= rs;//p2 left
    }
    else if(event.keyCode == 83 && isRunning) {
-      playerList[1].rotation += rs;//p2right
+      playerList[1].texture.rotation += rs;//p2right
    }
 }
 function resize() {
@@ -179,13 +189,19 @@ function animate() {
       if(isRunning){
          var count = 0;
          playerList.forEach(function(player){
-            animatePlayer(player, count);
+            animatePlayer(player.texture, count);
+            if(alive[count]){
+               rotatePlayer(player);
+            }
             count ++;
          });
       }
       // render the stage
       renderer.render(stage);
    }
+}
+function rotatePlayer(player){
+   player.texture.rotation += player.turn*rs;
 }
 
 function parseCol(color, toNumber) {
