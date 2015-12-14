@@ -82,8 +82,8 @@ CurveGame.prototype.checkIfAllReady = function(){
 	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
 	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE);
 	
-	console.log('ready players: '+ readyPlayers);
-	console.log('available players' + availablePlayers);
+	console.log('ready players: '+ readyPlayers.length);
+	console.log('available players' + availablePlayers.lenght);
 	
 	if(availablePlayers.length == 0 && readyPlayers >= 1){ //If no player is available and we have 2 or more ready players we can start the game
 		for (var i = 0; i < readyPlayers.length; i++) {

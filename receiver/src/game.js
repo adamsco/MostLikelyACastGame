@@ -1,6 +1,6 @@
 GAME_WIDTH = window.innerWidth;
 GAME_HEIGHT = window.innerHeight;
-var ms = 1.5;
+var ms = 4;
 var rs = 0.04
 var scaleTrail = 0.8;
 
