@@ -30,6 +30,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.cast.games.GameManagerClient;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -56,10 +57,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import android.os.Vibrator;
 
 /**
  * Main activity to send messages to the receiver.
@@ -84,18 +88,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private String mSessionId;
     private GameManagerClient mGameManagerClient;
     private SensorManager sManager;
-    private String lastVal;
+    private float lastVal;
+    private float[] m_lastMagFields;
+    private float[] m_lastAccels;
+    private float[] mRotationMatrix;
+    private float[] m_remappedR;
+    private float[] m_orientation;
+    private float[] orientationVals;
+    private JSONObject directionMessage;
+    private Vibrator v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+        m_lastMagFields = new float[3];
+        m_lastAccels = new float[3];
+        mRotationMatrix = new float[16];
+        m_remappedR = new float[16];
+        m_orientation = new float[4];
+        orientationVals = new float[3];
+        directionMessage = new JSONObject();
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(
                 getResources().getColor(android.R.color.transparent)));
 
-        lastVal = "";
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        lastVal = 999;
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         // When the user clicks on the button, use Android voice recognition to
@@ -120,11 +144,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * Android voice recognition
      */
     private void startVoiceRecognitionActivity() {
+        /*
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.message_to_cast));
-        startActivityForResult(intent, REQUEST_CODE);
+        startActivityForResult(intent, REQUEST_CODE);*/
+
+        sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
     }
 
     /*
@@ -152,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // Start media router discovery
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
-        sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
 
     }
 
@@ -191,8 +217,75 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         {
             return;
         }
-        float x = sensorEvent.values[2];
-        //Log.d("X val : ", "" + sensorEvent.values[2]);
+        //float x = sensorEvent.values[2];
+
+        SensorManager.getRotationMatrixFromVector(mRotationMatrix,
+                sensorEvent.values);
+
+        SensorManager
+                .remapCoordinateSystem(mRotationMatrix,
+                        SensorManager.AXIS_X, SensorManager.AXIS_Z,
+                        mRotationMatrix);
+
+        SensorManager.getOrientation(mRotationMatrix, orientationVals);
+
+        orientationVals[2] = (float) Math.toDegrees(orientationVals[2]);
+
+        float Roll =  orientationVals[2];
+
+        /*
+        Log.d("SENSOROUTPUT: ", " Yaw: " + orientationVals[0] + "\n Pitch: "
+                + orientationVals[1] + "\n Roll (not used): "
+                + orientationVals[2]);*/
+
+
+        if(Roll < -85 && Roll > -95 && lastVal != 0.0f){
+            Log.d("Middle: ", "" + Roll);
+            lastVal = 0.0f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage("bgrn", directionMessage);
+        }else if(Roll <= -95 && lastVal != -1.0f){
+            Log.d("Left", "" + Roll);
+            lastVal = -1.0f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage("bgrn", directionMessage);
+            v.vibrate(400);
+        }else if(Roll >= -85 && lastVal != 1.0f) {
+            Log.d("Right", "" + Roll);
+            lastVal = 1.0f;
+            try {
+                directionMessage.put("direction", (double) lastVal);
+                Log.d("X val : ", "HELLOEOWDKOWDKODWK");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mGameManagerClient.sendGameMessage("bgrn", directionMessage);
+        }
+//        Log.d("X val : ", "" + sensorEvent.values[0]);
+
+
+/*
+        if (SensorManager.getRotationMatrix(m_rotationMatrix, null,
+                m_lastAccels, m_lastMagFields)) {
+            SensorManager.getOrientation(m_rotationMatrix, m_orientation);
+
+            float yaw = m_orientation[0] * 57.2957795f;
+            float pitch = m_orientation[1] * 57.2957795f;
+            float roll = m_orientation[2] * 57.2957795f;
+
+            Log.d("Yaw: ", yaw + "");
+            Log.d("Pitch: ", pitch + "");
+            Log.d("Roll: ", roll + "");
+
+        }
 
 
         if(x > 0.3 && !lastVal.equals("One")){
@@ -219,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else if(x < 0 && !lastVal.equals("Eight")){
             Log.d("Eight", "" + x);
             lastVal = "Eight";
-        }
+        }*/
 /*
         Log.d("SENSORCHANGED", "Roll :"+ Float.toString(sensorEvent.values[2]) +"\n"+
                 "Pitch :"+ Float.toString(sensorEvent.values[1]) +"\n"+
@@ -402,8 +495,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             @Override
                             public void onResult(GameManagerClient.GameManagerInstanceResult result) {
                                 mGameManagerClient = result.getGameManagerClient();
-                                Log.d(TAG, "GameManagerClient onResult: " +result.getGameManagerClient());
+                                Log.d(TAG, "GameManagerClient onResult: " + result.getGameManagerClient());
                                 mGameManagerClient.sendPlayerAvailableRequest("bgrn", null);
+                                mGameManagerClient.sendPlayerReadyRequest("bgrn", null);
                                 mGameManagerClient.setListener(new DebuggerListener());
                             }
                         });
