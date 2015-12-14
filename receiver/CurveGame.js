@@ -13,7 +13,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	
 	//If first player open lobby 
 	//Else check if lobby is open, if it is then add player to the lobby if it is not then tell player to wait for the next round
-	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE, true);
+	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE);
 	
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.CLOSED){
@@ -57,7 +57,7 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	//Updates from control goes here, I think
 	console.log('Input from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
 	var turnValue = event.requestExtraMessageData;
-	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING, true);
+	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
 	var playerNumber = readyPlayers.indexOf(event.playerInfo);
 	
 	console.log('Player number: '+playerNumber);
@@ -74,8 +74,8 @@ CurveGame.prototype.onLobbyOpen = function() {};
 CurveGame.prototype.onLobbyClosed = function() {};
 
 function checkIfAllReady(){
-	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY, true);
-	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE, true);
+	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
+	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE);
 	
 	if(availablePlayers.length == 0 && readyPlayers > 1){ //If no player is available and we have 2 or more ready players we can start the game
 		for (var i = 0; i < readyPlayers.length; i++) {
