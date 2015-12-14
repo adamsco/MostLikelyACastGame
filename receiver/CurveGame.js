@@ -62,6 +62,7 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	
 	console.log('Player number: '+playerNumber);
 	console.log('Turn Value: '+JSON.stringify(turnValue));
+	console.log('Turn Value 2: '+turnValue.direction);
 	
 	inputFromMobile(turnValue, playerNumber);
 };
@@ -70,20 +71,26 @@ CurveGame.prototype.onGameLoading = function() {};
 CurveGame.prototype.onGameRunning = function() {};
 CurveGame.prototype.onGamePaused = function() {};
 CurveGame.prototype.onGameShowingInfoScreen = function() {};
-CurveGame.prototype.onLobbyOpen = function() {};
-CurveGame.prototype.onLobbyClosed = function() {};
+CurveGame.prototype.onLobbyOpen = function(event) {
+	
+	console.log('Lobby opened');
+};
+CurveGame.prototype.onLobbyClosed = function(event) {
+	console.log('Lobby closed');
+};
 
 CurveGame.prototype.checkIfAllReady = function(){
 	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
 	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE);
 	
-	if(availablePlayers.length == 0 && readyPlayers > 1){ //If no player is available and we have 2 or more ready players we can start the game
+	if(availablePlayers.length == 0 && readyPlayers >= 1){ //If no player is available and we have 2 or more ready players we can start the game
 		for (var i = 0; i < readyPlayers.length; i++) {
 			this.gameManager.updatePlayerState(readyPlayers.playerId,cast.receiver.games.PlayerState.PLAYING, true);
 		}
+		
+		//Start game here
+		gameInit();
 	}
 	this.gameManager.broadcastGameManagerStatus();
-	//Start game here
-	gameInit();
 };
 
