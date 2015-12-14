@@ -27,7 +27,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){
 		//add player to the lobby
-		joinGame('Player' + event.playerINfo.playerId);
+		joinGame('Player' + event.playerInfo.playerId);
 		//Send message to player that it has joined the lobby
 		console.log('Lobby is open');
 	}
