@@ -114,7 +114,7 @@ function inputController() {
 }
 
 function inputFromMobile(turnValue, playerNumber){
-	playerList[playerNumber].rotation += turnValue; 
+	playerList[playerNumber].rotation = turnValue; 
 } 
 
 function resize() {

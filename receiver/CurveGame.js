@@ -26,8 +26,17 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	}
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){
+		
+		var playerNumber = -1;
+		//var playerNumber = parseInt(event.playerInfo.playerId.substring(2,1));
+		for (var i = 0; i < availablePlayers.length; i++) {
+			if(availablePlayers[i].playerId == event.playerInfo.playerId){
+				playerNumber = i;
+			}
+		}
+		
 		//add player to the lobby
-		joinGame('Player' + event.playerInfo.playerId);
+		joinGame('Player' + playerNumber);
 		//Send message to player that it has joined the lobby
 		console.log('Lobby is open');
 	}
@@ -58,8 +67,13 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	//Updates from control goes here, I think
 	console.log('Input from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
 	var message = event.requestExtraMessageData;
-	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
-	var playerNumber = parseInt(event.playerInfo.playerId.substring(2,1));
+	var playingPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
+	//var playerNumber = parseInt(event.playerInfo.playerId.substring(2,1));
+	for (var i = 0; i < playingPlayers.length; i++) {
+		if(playingPlayers[i].playerId == event.playerInfo.playerId){
+			playerNumber = i;
+		}
+	}
 	
 	console.log('Player number: '+playerNumber);
 	console.log('Turning value '+message.direction);
