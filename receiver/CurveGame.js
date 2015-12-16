@@ -76,12 +76,8 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	console.log('Input from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
 	var message = event.requestExtraMessageData;
 	var playingPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
-	//var playerNumber = parseInt(event.playerInfo.playerId.substring(2,1));
-	for (var i = 0; i < playingPlayers.length; i++) {
-		if(playingPlayers[i].playerId == event.playerInfo.playerId){
-			playerNumber = i;
-		}
-	}
+	
+	playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
 	
 	console.log('Player number: '+playerNumber);
 	console.log('Turning value '+message.direction);
