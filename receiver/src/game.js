@@ -23,10 +23,12 @@ var alive = [];
 var bunny;
 var view;
 var ctx;
+var loader;
 var isRunning = true;
 var curveGame;
 //gameInit();
 var tails = [];
+tailTextures =[];
 
 function switchState(){
    if(document.getElementById('board').rows.length >1){
@@ -54,11 +56,29 @@ function gameInit(){
       // create a renderer instance.
       renderer = PIXI.autoDetectRenderer(GAME_WIDTH, GAME_HEIGHT);
       renderCanvas = new PIXI.CanvasRenderer(GAME_WIDTH, GAME_HEIGHT);
+      if(tailTextures.length <1){
 
-      requestAnimationFrame( animate );
+      loader = PIXI.loader
+         .add('image1', 'img/0C5DA5.png')
+         .add('image2', 'img/C6F500.png')
+         .add('image3', 'img/FF3D00.png')
+         .add('image4', 'img/00A383.png')
+         .add('image5', 'img/FF9500.png')
+         .add('image6', 'img/AD009F.png')
+         .add('image7', 'img/ED6B95.png')
+         .add('image8', 'img/FFFC73.png')
+         .once('complete', function(loader, resources){
+            requestAnimationFrame( animate );
+         })
+         .load();
+      }
+      else{
+         requestAnimationFrame( animate );
+      }
       //renderer.backgroundColor = 0xFFFFFF;
       renderer.preserveDrawingBuffer = true;
       resize();
+
 
       // add the renderer view element to the DOM
       document.body.appendChild(renderer.view);
@@ -101,6 +121,7 @@ function createPlayer(){
    playerList[playerList.length-1].texture.tint = playerList[playerList.length-1].texture.playerColor;
    playerList[playerList.length-1].texture.position.x = (Math.random() * GAME_WIDTH);
    playerList[playerList.length-1].texture.position.y = (Math.random() * GAME_HEIGHT*0.5)+GAME_HEIGHT*0.5;
+   playerList[playerList.length-1].texture.rotation = Math.random() * 6.2;
    //each player needs a particleContainer
    tails.push(new PIXI.ParticleContainer());
 
@@ -177,7 +198,7 @@ function animatePlayer( player , count ){
          //add trail
          str = "img/"+ colorTable[count % 8].slice(1) + ".png";
          //console.log(str);
-         var sprite = new PIXI.Sprite.fromImage(str);
+         var sprite = getTexture(count % 8);
          sprite.anchor = player.anchor;
          //clone
          var tempPos = JSON.parse(JSON.stringify(player.position));
@@ -217,6 +238,17 @@ function animate() {
       renderer.render(stage);
    }
 }
+function getTexture(nr){
+   if(nr == 0){ return new PIXI.Sprite( PIXI.loader.resources.image1.texture)  }
+   else if(nr == 1){ return new PIXI.Sprite( PIXI.loader.resources.image2.texture) }
+   else if(nr == 2){ return new PIXI.Sprite( PIXI.loader.resources.image3.texture) }
+   else if(nr == 3){ return new PIXI.Sprite( PIXI.loader.resources.image4.texture) }
+   else if(nr == 4){ return new PIXI.Sprite( PIXI.loader.resources.image5.texture) }
+   else if(nr == 5){ return new PIXI.Sprite( PIXI.loader.resources.image6.texture) }
+   else if(nr == 6){ return new PIXI.Sprite( PIXI.loader.resources.image7.texture) }
+   else if(nr == 7){ return new PIXI.Sprite( PIXI.loader.resources.image8.texture) }
+   else{return 0/*error*/}
+}
 function rotatePlayer(player){
    player.texture.rotation += player.turn*rs;
 }
@@ -244,19 +276,22 @@ function getScore() {
 }
 function resetGameBoard() {
    var count = 0;
+   stage = new PIXI.Container();
    playerList.forEach(function(player){
       alive[count] = true;
-      resetPlayer(player);
+      resetPlayer(player, count);
+      tails[count] = new PIXI.ParticleContainer();
+      stage.addChild(tails[count]);
       count ++;
    });
-   stage = new PIXI.Container();
+
    isRunning = true;
 }
-function resetPlayer(player){
-   player.texture.position.x = (Math.random() * GAME_WIDTH);
-   player.texture.position.y =  (Math.random() * GAME_HEIGHT*0.5)+GAME_HEIGHT*0.5;
+function resetPlayer(player, count){
+   player.texture.position.x = 0.2*GAME_WIDTH + (Math.random() * GAME_WIDTH*0.6);
+   player.texture.position.y =  0.2*GAME_HEIGHT + (Math.random() * GAME_HEIGHT*0.6);
    player.turn = 0;
-   player.texture.rotation = 0;
+   player.texture.rotation = Math.random() * 6.2;
    stage.addChild(player.texture);
 }
 function parseCol(color, toNumber) {
