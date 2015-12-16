@@ -29,19 +29,6 @@ tr {
     vertical-align: inherit;
     border-color: inherit;
 }
-#td1{
-   width: 80%;
-   text-align: left;
-}
-#td2{
-   width: 10%;
-
-}
-#td3{
-   width: 10%;
-   color: red !important;
-   text-align: center !important;
-}
 
 #board th {
     padding-top: 11px;
@@ -53,6 +40,20 @@ tr {
     border: 1px solid #CCC;
     text-align: left;
     padding: 8px;
-    color: #FFF;
     background-color: #000;
+}
+
+#td1{
+   color: #FFF;
+   width: 80%;
+   text-align: left;
+}
+#td2{
+   color: #FFF;
+   width: 10%;
+}
+#td3{
+   width: 10%;
+   color: #FF0000;
+   text-align: center !important;
 }

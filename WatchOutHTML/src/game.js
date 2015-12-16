@@ -168,7 +168,9 @@ function animatePlayer( player , count ){
       }
       if(renderCount == 0){
          //add trail
-         var sprite = new PIXI.Sprite.fromImage('img/trail.png');
+         str = "img/"+ colorTable[count % 8].slice(1) + ".png";
+         //console.log(str);
+         var sprite = new PIXI.Sprite.fromImage(str);
          sprite.anchor = player.anchor;
          //clone
          var tempPos = JSON.parse(JSON.stringify(player.position));
@@ -176,7 +178,7 @@ function animatePlayer( player , count ){
          sprite.position.y = tempPos.y;
          sprite.scale.x = scaleTrail;
          sprite.scale.y = scaleTrail;
-         sprite.tint = player.playerColor;
+         //sprite.tint = player.playerColor;
 
          tails[count].addChild(sprite);
       }
@@ -221,6 +223,13 @@ function addPoints() {
       console.log(player.score);
       count ++;
    });
+}
+function getScore() {
+   var score = [];
+   playerList.forEach(function(player){
+      score.push(player.score);
+   });
+   return score;
 }
 function resetGameBoard() {
    var count = 0;
