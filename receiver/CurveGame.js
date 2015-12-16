@@ -32,7 +32,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){
 		
 		var playerId = event.playerInfo.playerId;
-		var index = lobbyList.indexOf(playerId);
+		var index = this.lobbyList.indexOf(playerId);
 		
 		if(index == -1){		
 			var inMessage = event.requestExtraMessageData;
@@ -73,7 +73,7 @@ CurveGame.prototype.onPlayerDropped = function(event) {
 	//Remove player from lobby or game
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){		
 		var playerId = event.playerInfo.playerId;
-		var playerNumber = lobbyList.indexOf(playerId); 
+		var playerNumber = this.lobbyList.indexOf(playerId); 
 		leaveGame(playerNumber);
 	}
 	console.log('Player dropped');
@@ -82,7 +82,7 @@ CurveGame.prototype.onPlayerQuit = function(event) {
 	//Remove player from lobby or game
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){		
 		var playerId = event.playerInfo.playerId;
-		var playerNumber = lobbyList.indexOf(playerId); 
+		var playerNumber = this.lobbyList.indexOf(playerId); 
 		leaveGame(playerNumber);
 	}
 	
