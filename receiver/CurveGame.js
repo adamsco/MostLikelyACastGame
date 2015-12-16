@@ -49,7 +49,8 @@ CurveGame.prototype.onPlayerReady = function(event) {
 	this.checkIfAllReady();
 };
 CurveGame.prototype.onPlayerIdle = function() {};
-CurveGame.prototype.onPlayerPlaying = function(event) {
+CurveGame.prototype.onPlayerPlaying = function(event) {	
+	console.log('Player ' + event.playerInfo.playerId + ' is playing');
 	// Tell player game is about to start
 	var playerId = event.playerInfo.playerId;
 	var message = { message: 'You are now playing' };
