@@ -22,15 +22,14 @@ function joinGame(playerName){
 }
 
 function playerReady (playerNumber){
-   var cell = document.getElementById('board').rows[playerNumber].cells[2];
+   var cell = document.getElementById('board').rows[playerNumber+1].cells[2];
 
    cell.innerHTML ="Yes";
-   cell.innerHTML.style.color = "green";
+   cell.style.color = "green";
 }
 function playerNotReady(playerNumber){
-   var cell = document.getElementById('board').rows[playerNumber].cells[2].innerHTML;
+   var cell = document.getElementById('board').rows[playerNumber+1].cells[2];
 
-   cell ="No";
+   cell.innerHTML ="No";
    cell.style.color = "red";
-
 }

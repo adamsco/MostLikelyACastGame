@@ -152,6 +152,7 @@ function animatePlayer( player , count ){
       //playercolission?
       if(didCollide(player.position.x, player.position.y, player.rotation)){
             alive[count] = false;
+            addPoints();//add points to all players still alive
             var keepGoing = 0;
             for(var i = 0; i < playerList.length ; i++ ){
                if(alive[i] == true)
@@ -205,7 +206,33 @@ function animate() {
 function rotatePlayer(player){
    player.texture.rotation += player.turn*rs;
 }
-
+function addPoints() {
+   var count = 0;
+   playerList.forEach(function(player){
+      if(alive[count]){
+         player.score += 1;
+      }
+      console.log(player.score);
+      count ++;
+   });
+}
+function resetGameBoard() {
+   var count = 0;
+   playerList.forEach(function(player){
+      alive[count] = true;
+      resetPlayer(player);
+      count ++;
+   });
+   stage = new PIXI.Container();
+   isRunning = true;
+}
+function resetPlayer(player){
+   player.texture.position.x = (Math.random() * GAME_WIDTH);
+   player.texture.position.y =  (Math.random() * GAME_HEIGHT*0.5)+GAME_HEIGHT*0.5;
+   player.turn = 0;
+   player.texture.rotation = 0;
+   stage.addChild(player.texture);
+}
 function parseCol(color, toNumber) {
   if (toNumber === true) {
     if (typeof color === 'number') {
