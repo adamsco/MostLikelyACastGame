@@ -33,9 +33,12 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 		
 		if(index == -1){		
 			var inMessage = event.requestExtraMessageData;
-			var userName = inMessage.username;
+			var userName = '';
+			if(inMessage !=undefined){
+				userName = inMessage.username;
+			}
 			
-			if(userName = undefined){
+			if(userName == undefined){
 				userName = 'Player '+playerId;
 			}
 			
