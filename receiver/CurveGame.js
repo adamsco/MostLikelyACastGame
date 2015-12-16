@@ -38,8 +38,8 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 				userName = inMessage.username;
 			}
 			
-			if(userName == undefined){
-				userName = 'Player '+playerId;
+			if(userName == ''){
+				userName = 'Missing name '+playerId;
 			}
 			
 			//add player to the lobby
