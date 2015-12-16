@@ -571,6 +571,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 Log.d(TAG, "GameManagerClient onResult: " + result.getGameManagerClient());
                                 mGameManagerClient.sendPlayerAvailableRequest(null, null);
                                 mGameManagerClient.setListener(new DebuggerListener());
+                                // mGameManagerClient.setList
                             }
                         });
             } else {
@@ -579,6 +580,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
     }
+
 
     private class DebuggerListener implements GameManagerClient.Listener {
 
@@ -602,7 +604,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         ? currentState.getGameData().toString() : "";
                 Log.d(TAG, "onGameDataChanged: " + text);
                 //if(text=="DEATH"){
-                    v.vibrate(400);
                 //}
                 //mTextViewGameData.setText(text);
             }
@@ -611,6 +612,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void onGameMessageReceived(String s, JSONObject jsonObject) {
 
+            if (s.equals(mGameManagerClient.getLastUsedPlayerId())) {
+                try {
+                    if (jsonObject.get("message").equals("You are now playing")) {
+                        Log.d(TAG, "The message: " + jsonObject.get("message"));
+                        v.vibrate(400);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

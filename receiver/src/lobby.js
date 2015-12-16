@@ -21,3 +21,17 @@ function joinGame(playerName){
   nrPlayers ++;
   console.log('player added to lobby');
 }
+
+function playerReady (playerNumber){
+   var cell = document.getElementById('board').rows[playerNumber].cells[2];
+
+   cell.innerHTML ="Yes";
+   cell.innerHTML.style.color = "green";
+}
+function playerNotReady(playerNumber){
+   var cell = document.getElementById('board').rows[playerNumber].cells[2].innerHTML;
+
+   cell ="No";
+   cell.style.color = "red";
+
+}
