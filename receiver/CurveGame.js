@@ -31,13 +31,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){
 		
-		var playerNumber = -1;
-		//var playerNumber = parseInt(event.playerInfo.playerId.substring(2,1));
-		for (var i = 0; i < availablePlayers.length; i++) {
-			if(availablePlayers[i].playerId == event.playerInfo.playerId){
-				playerNumber = i;
-			}
-		}
+		var playerNumber = getPlayerNumber(event.playerInfo.playerId, availablePlayers);
 		
 		//add player to the lobby
 		joinGame('Player' + playerNumber);
@@ -143,8 +137,20 @@ CurveGame.prototype.checkIfAllReady = function(){
 	this.gameManager.broadcastGameManagerStatus();
 };
 
-CurveGame.prototype.openLobby(){
+CurveGame.prototype.openLobby = function(){
 	this.gameManager.updateLobbyState(cast.receiver.games.LobbyState.OPEN, true);
 	this.gameManager.broadcastGameManagerStatus();
-}
+};
+
+CurveGame.prototype.getPlayerNumber = function(playerId, playerList){
+	var playerNumber = -1;
+		//var playerNumber = parseInt(event.playerInfo.playerId.substring(2,1));
+	for (var i = 0; i < playerList.length; i++) {
+		if(playerList[i].playerId == playerId){
+			playerNumber = i;
+		}
+	}
+	
+	return playerNumber;
+};
 
