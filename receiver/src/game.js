@@ -3,7 +3,7 @@ var colorTable =["#0c5da5", "#c6f500", "#FF3d00", "#00A383", "#FF9500", "#Ad009f
 var dRatio = 0.96;
 GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
-var ms = 2;
+var ms = 3;
 var rs = 0.1;
 var scaleTrail = 0.4;
 var scalePlayer = 0.5;
@@ -13,7 +13,7 @@ var stage;
 
 var renderCount = 0;
 //2 = every 2nd trail is rendered
-var renderIntensity = 2;
+var renderIntensity = 1;
 // create a renderer instance.
 var renderer;
 var renderCanvas;
