@@ -252,7 +252,6 @@ function resetPlayer(player){
    player.texture.rotation = 0;
    stage.addChild(player.texture);
 }
->>>>>>> master:WatchOutHTML/src/game.js
 function parseCol(color, toNumber) {
   if (toNumber === true) {
     if (typeof color === 'number') {
