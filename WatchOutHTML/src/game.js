@@ -45,6 +45,8 @@ function gameInit(){
       playerList = [];
       isRunning = true;
       stage = new PIXI.Container();
+      stage.cacheAsBitMap = true;
+
       // create a renderer instance.
       renderer = PIXI.autoDetectRenderer(GAME_WIDTH, GAME_HEIGHT);
       renderCanvas = new PIXI.CanvasRenderer(GAME_WIDTH, GAME_HEIGHT);
