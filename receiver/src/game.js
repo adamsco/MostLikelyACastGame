@@ -11,9 +11,6 @@ var enabled = false;
 // create an new instance of a pixi stage
 var stage;
 
-var renderCount = 0;
-//2 = every 2nd trail is rendered
-var renderIntensity = 1;
 // create a renderer instance.
 var renderer;
 var renderCanvas;
@@ -194,7 +191,6 @@ function animatePlayer( player , count ){
             if(keepGoing < 2)
                isRunning = false;
       }
-      if(renderCount == 0){
          //add trail
          str = "img/"+ colorTable[count % 8].slice(1) + ".png";
          //console.log(str);
@@ -208,7 +204,6 @@ function animatePlayer( player , count ){
          sprite.scale.y = scaleTrail;
          //sprite.tint = player.playerColor;
          tails[count].addChild(sprite);
-      }
 
       //then move player
       player.position.x += ms* Math.sin(player.rotation);
@@ -217,7 +212,6 @@ function animatePlayer( player , count ){
 }
 function animate() {
    if(enabled){
-      renderCount = (renderCount+1) % renderIntensity;
       requestAnimationFrame( animate );
       //texture for collidecheck
       view = renderCanvas.view;
