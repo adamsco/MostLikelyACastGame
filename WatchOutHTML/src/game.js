@@ -1,4 +1,4 @@
-var colorTable =["#0c5da5", "#c6f500", "#FF3d00", "#00A383", "#FF9500", "#Ad009f", "#ED6b95", "#FFFC73"];
+var colorTable =["#0C5DA5", "#C6F500", "#FF3D00", "#00A383", "#FF9500", "#AD009F", "#ED6B95", "#FFFC73"];
 var dRatio = 0.96;
 GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
@@ -12,7 +12,7 @@ var stage;
 
 var renderCount = 0;
 //2 = every 2nd trail is rendered
-var renderIntensity = 2;
+var renderIntensity = 1;
 // create a renderer instance.
 var renderer;
 var renderCanvas;
@@ -144,7 +144,7 @@ function resize() {
                   Math.ceil(GAME_HEIGHT * ratio));
 }
 function didCollide(x,y,rot){
-   var col = ctx.getImageData(x+20*Math.sin(rot), y-20*Math.cos(rot),1,1).data;
+   var col = ctx.getImageData(x+12*Math.sin(rot), y-12*Math.cos(rot),1,1).data;
    if(col[0] > 0 || col[1] > 0 || col[2] > 0 || col[3] == 0){
       console.log("Its a hit!");
       console.log(col);
@@ -155,7 +155,7 @@ function didCollide(x,y,rot){
 function animatePlayer( player , count ){
    if(player != undefined && alive[count]){
       //playercolission?
-      /*if(didCollide(player.position.x, player.position.y, player.rotation)){
+      if(didCollide(player.position.x, player.position.y, player.rotation)){
             alive[count] = false;
             addPoints();//add points to all players still alive
             var keepGoing = 0;
@@ -165,7 +165,7 @@ function animatePlayer( player , count ){
             }
             if(keepGoing < 2)
                isRunning = false;
-      }*/
+      }
       if(renderCount == 0){
          //add trail
          var sprite = new PIXI.Sprite.fromImage('img/trail.png');
@@ -178,9 +178,7 @@ function animatePlayer( player , count ){
          sprite.scale.y = scaleTrail;
          sprite.tint = player.playerColor;
 
-         tails[0].addChild(sprite);
-         console.log("stage")
-         console.log(tails[0]);
+         tails[count].addChild(sprite);
       }
 
       //then move player
@@ -193,9 +191,9 @@ function animate() {
       renderCount = (renderCount+1) % renderIntensity;
       requestAnimationFrame( animate );
       //texture for collidecheck
-      //view = renderCanvas.view;
-      //renderCanvas.render(stage);
-      //ctx = view.getContext("2d");
+      view = renderCanvas.view;
+      renderCanvas.render(stage);
+      ctx = view.getContext("2d");
 
       if(isRunning){
          var count = 0;
