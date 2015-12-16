@@ -22,6 +22,9 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 			this.gameManager.broadcastGameManagerStatus();
 		}else{//A player tries to join when a game is running so tell the player to wait
 			//Send message to player that it needs to wait for current game to end and join the next
+			var playerId = event.playerInfo.playerId;
+			var message = { message: 'LOBBY_closed' };
+			this.gameManager.sendGameMessageToPlayer(playerId, message);
 		}		
 	}
 	
@@ -61,6 +64,9 @@ CurveGame.prototype.onPlayerDropped = function(event) {
 };
 CurveGame.prototype.onPlayerQuit = function(event) {
 	//Remove player from lobby or game
+	if (window.castReceiverManager.getSenders().length == 0) {//If all player left close the app
+			window.close();
+	}
 };
 CurveGame.prototype.onPlayerDataChanged = function(event) {
 	
@@ -110,7 +116,7 @@ CurveGame.prototype.checkIfAllReady = function(){
 		}
 		
 		//Start game here
-		
+		this.gameManager.updateLobbyState(cast.receiver.games.LobbyState.CLOSED, true);
 		console.log('Game started');
 		switchState();
 		
