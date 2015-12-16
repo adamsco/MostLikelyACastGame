@@ -2,13 +2,13 @@
 
 function CurveGame(gameManager) {
 	this.gameManager = gameManager;	
+	this.lobbyList = [];
 	console.log('game manager set' + this.gameManager);
 };
 
 CurveGame.prototype.onPlayerAvailable = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is available');
 	console.log('game manager in available' + this.gameManager);
-	
 	
 	
 	//If first player open lobby 
@@ -31,12 +31,22 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){
 		
-		var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, availablePlayers);
+		var playerId = event.playerInfo.playerId;
+		var index = lobbyList.indexOf(playerId);
 		
-		//add player to the lobby
-		joinGame('Player' + playerNumber);
-		//Send message to player that it has joined the lobby
-		console.log('Lobby is open');
+		if(index == -1){		
+			var inMessage = event.requestExtraMessageData;
+			var userName = inMessage.username;
+			
+			//add player to the lobby
+			this.lobbyList.push(playerId);		
+			joinGame(userName);
+			//Send message to player that it has joined the lobby
+			var message = { message: 'LOBBY_joined' };
+			this.gameManager.sendGameMessageToPlayer(playerId, message);
+		}else{
+			playerNotReady(index);
+		}
 	}
 	
 };
@@ -62,8 +72,8 @@ CurveGame.prototype.onPlayerPlaying = function(event) {
 CurveGame.prototype.onPlayerDropped = function(event) {
 	//Remove player from lobby or game
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){		
-		var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
-		var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, readyPlayers);	
+		var playerId = event.playerInfo.playerId;
+		var playerNumber = lobbyList.indexOf(playerId); 
 		leaveGame(playerNumber);
 	}
 	console.log('Player dropped');
@@ -71,8 +81,8 @@ CurveGame.prototype.onPlayerDropped = function(event) {
 CurveGame.prototype.onPlayerQuit = function(event) {
 	//Remove player from lobby or game
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){		
-		var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
-		var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, readyPlayers);	
+		var playerId = event.playerInfo.playerId;
+		var playerNumber = lobbyList.indexOf(playerId); 
 		leaveGame(playerNumber);
 	}
 	
