@@ -5,7 +5,7 @@ GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
 var ms = 7;
 var rs = 0.1;
-var scaleTrail = 0.8;
+var scaleTrail = 0.6;
 var scalePlayer = 0.5;
 var enabled = false;
 // create an new instance of a pixi stage
