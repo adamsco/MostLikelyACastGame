@@ -178,6 +178,7 @@ function animatePlayer( player , count ){
          sprite.scale.x = scaleTrail;
          sprite.scale.y = scaleTrail;
          sprite.tint = player.playerColor;
+		 sprite.cashAsBitmap = true;
          stage.addChild(sprite);
       }
 
