@@ -3,13 +3,10 @@
 function CurveGame(gameManager) {
 	this.gameManager = gameManager;	
 	this.lobbyList = [];
-	console.log('game manager set' + this.gameManager);
 };
 
 CurveGame.prototype.onPlayerAvailable = function(event) {
-	console.log('Player ' + event.playerInfo.playerId + ' is available');
-	console.log('game manager in available' + this.gameManager);
-	
+	console.log('Player ' + event.playerInfo.playerId + ' is available');	
 	
 	//If first player open lobby 
 	//Else check if lobby is open, if it is then add player to the lobby if it is not then tell player to wait for the next round
@@ -42,7 +39,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 			this.lobbyList.push(playerId);		
 			joinGame(userName);
 			//Send message to player that it has joined the lobby
-			var message = { message: 'LOBBY_joined' };
+			var message = { message: 'LOBBY_join' };
 			this.gameManager.sendGameMessageToPlayer(playerId, message);
 		}else{
 			playerNotReady(index);
