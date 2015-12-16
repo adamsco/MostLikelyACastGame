@@ -1,4 +1,4 @@
-var colorTable =["#0c5da5", "#c6f500", "#FF3d00", "#00A383", "#FF9500", "#Ad009f", "#ED6b95", "#FFFC73"];
+var colorTable =["#0C5DA5", "#C6F500", "#FF3D00", "#00A383", "#FF9500", "#AD009F", "#ED6B95", "#FFFC73"];
 var nrPlayers = 0;
 
 function joinGame(playerName){
