@@ -35,6 +35,10 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 			var inMessage = event.requestExtraMessageData;
 			var userName = inMessage.username;
 			
+			if(userName = undefined){
+				userName = 'Player '+playerId;
+			}
+			
 			//add player to the lobby
 			this.lobbyList.push(playerId);		
 			joinGame(userName);
