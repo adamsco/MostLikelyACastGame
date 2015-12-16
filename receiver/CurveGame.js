@@ -43,6 +43,11 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 
 CurveGame.prototype.onPlayerReady = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is ready');
+	
+	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);	
+	var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, readyPlayers);	
+	playerReady(playerNumber);
+	
 	//Check if everyone is ready
 	this.checkIfAllReady();
 };
@@ -56,10 +61,21 @@ CurveGame.prototype.onPlayerPlaying = function(event) {
 };
 CurveGame.prototype.onPlayerDropped = function(event) {
 	//Remove player from lobby or game
+	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){		
+		var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
+		var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, readyPlayers);	
+		leaveGame(playerNumber);
+	}
 	console.log('Player dropped');
 };
 CurveGame.prototype.onPlayerQuit = function(event) {
 	//Remove player from lobby or game
+	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.OPEN){		
+		var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
+		var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, readyPlayers);	
+		leaveGame(playerNumber);
+	}
+	
 	console.log('Player quit');
 	if (window.castReceiverManager.getSenders().length == 0) {//If all player left close the app
 			//window.close();
@@ -72,16 +88,12 @@ CurveGame.prototype.onPlayerDataChanged = function(event) {
 };
 CurveGame.prototype.onGameStatusTextChanged = function() {};
 CurveGame.prototype.onGameMessageReceived = function(event) {
-	//Updates from control goes here, I think
-	console.log('Input from player ' + event.playerInfo.playerId + ': ' + event.requestExtraMessageData);
+	//Inputs from players
 	var message = event.requestExtraMessageData;
 	var playingPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
 	
 	playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
-	
-	console.log('Player number: '+playerNumber);
-	console.log('Turning value '+message.direction);
-	
+		
 	inputFromMobile(message.direction, playerNumber);
 };
 CurveGame.prototype.onGameDataChanged = function() {};

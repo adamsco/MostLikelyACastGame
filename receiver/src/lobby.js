@@ -22,6 +22,10 @@ function joinGame(playerName){
   console.log('player added to lobby');
 }
 
+function leaveGame(playerNumber){
+	document.getElementById("myTable").deleteRow(playerNumber+1);
+}
+
 function playerReady (playerNumber){
    var cell = document.getElementById('board').rows[playerNumber+1].cells[2];
 
