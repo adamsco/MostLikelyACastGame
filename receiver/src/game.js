@@ -185,8 +185,6 @@ function animatePlayer( player , count ){
          sprite.scale.y = scaleTrail;
          sprite.tint = player.playerColor;
          tails[0].addChild(sprite);
-         console.log("stage")
-         console.log(tails[0]);
       }
 
       //then move player
