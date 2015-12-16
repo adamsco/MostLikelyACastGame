@@ -29,6 +29,7 @@ import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.cast.games.GameManagerClient;
+import com.google.android.gms.internal.zzlg;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -39,6 +40,8 @@ import android.hardware.SensorManager;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.speech.RecognizerIntent;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private boolean mApplicationStarted;
     private boolean mWaitingForReconnect;
     private String mSessionId;
-    private GameManagerClient mGameManagerClient;
+    private static GameManagerClient mGameManagerClient;
     private SensorManager sManager;
     private float lastVal;
     private float[] m_lastMagFields;
@@ -342,55 +345,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
             mGameManagerClient.sendGameMessage(directionMessage);
         }
-//        Log.d("X val : ", "" + sensorEvent.values[0]);
-
-
-/*
-        if (SensorManager.getRotationMatrix(m_rotationMatrix, null,
-                m_lastAccels, m_lastMagFields)) {
-            SensorManager.getOrientation(m_rotationMatrix, m_orientation);
-
-            float yaw = m_orientation[0] * 57.2957795f;
-            float pitch = m_orientation[1] * 57.2957795f;
-            float roll = m_orientation[2] * 57.2957795f;
-
-            Log.d("Yaw: ", yaw + "");
-            Log.d("Pitch: ", pitch + "");
-            Log.d("Roll: ", roll + "");
-
-        }
-
-
-        if(x > 0.3 && !lastVal.equals("One")){
-            Log.d("One", "" + x);
-            lastVal = "One";
-        }else if(x < 0.3 && x > 0.25 &&  !lastVal.equals("Two")){
-            Log.d("Two", "" + x);
-            lastVal = "Two";
-        }else if(x < 0.25 && x > 0.2 && !lastVal.equals("Three")){
-            Log.d("Three", "" + x);
-            lastVal = "Three";
-        }else if(x < 0.2 && x > 0.15 && !lastVal.equals("Four")){
-            Log.d("Four", "" + x);
-            lastVal = "Four";
-        } else if(x < 0.15 && x > 0.1 && !lastVal.equals("Five")){
-            Log.d("Five", "" + x);
-            lastVal = "Five";
-        } else if(x < 0.1 && x > 0.05 && !lastVal.equals("Six")){
-            Log.d("Six", "" + x);
-            lastVal = "Six";
-        }  else if(x < 0.05 && x > 0 && !lastVal.equals("Seven")){
-            Log.d("Seven", "" + x);
-            lastVal = "Seven";
-        } else if(x < 0 && !lastVal.equals("Eight")){
-            Log.d("Eight", "" + x);
-            lastVal = "Eight";
-        }*/
-/*
-        Log.d("SENSORCHANGED", "Roll :"+ Float.toString(sensorEvent.values[2]) +"\n"+
-                "Pitch :"+ Float.toString(sensorEvent.values[1]) +"\n"+
-                "Yaw :"+ Float.toString(sensorEvent.values[0]));
-*/
 
     }
 
@@ -492,50 +446,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     // Launch the receiver app
                     Cast.CastApi.launchApplication(mApiClient, getString(R.string.app_id), false)
                             .setResultCallback(new LaunchReceiverApplicationResultCallback());
-                               /*     new ResultCallback<Cast.ApplicationConnectionResult>() {
-                                        @Override
-                                        public void onResult(
-                                                ApplicationConnectionResult result) {
-                                            Status status = result.getStatus();
-                                            Log.d(TAG,
-                                                    "ApplicationConnectionResultCallback.onResult:"
-                                                            + status.getStatusCode());
-                                            if (status.isSuccess()) {
-                                                ApplicationMetadata applicationMetadata = result
-                                                        .getApplicationMetadata();
-                                                mSessionId = result.getSessionId();
-                                                String applicationStatus = result
-                                                        .getApplicationStatus();
-                                                boolean wasLaunched = result.getWasLaunched();
-                                                Log.d(TAG, "application name: "
-                                                        + applicationMetadata.getName()
-                                                        + ", status: " + applicationStatus
-                                                        + ", sessionId: " + mSessionId
-                                                        + ", wasLaunched: " + wasLaunched);
-                                                mApplicationStarted = true;
 
-                                                // Create the custom message
-                                                // channel
-                                                mHelloWorldChannel = new HelloWorldChannel();
-                                                try {
-                                                    Cast.CastApi.setMessageReceivedCallbacks(
-                                                            mApiClient,
-                                                            mHelloWorldChannel.getNamespace(),
-                                                            mHelloWorldChannel);
-                                                } catch (IOException e) {
-                                                    Log.e(TAG, "Exception while creating channel",
-                                                            e);
-                                                }
-
-                                                // set the initial instructions
-                                                // on the receiver
-                                                sendMessage(getString(R.string.instructions));
-                                            } else {
-                                                Log.e(TAG, "application could not launch");
-                                                teardown(true);
-                                            }
-                                        }
-                                    });*/
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Failed to launch application", e);
@@ -569,8 +480,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             public void onResult(GameManagerClient.GameManagerInstanceResult result) {
                                 mGameManagerClient = result.getGameManagerClient();
                                 Log.d(TAG, "GameManagerClient onResult: " + result.getGameManagerClient());
-                                mGameManagerClient.sendPlayerAvailableRequest(null, null);
-                                mGameManagerClient.setListener(new DebuggerListener());
+
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                startActivity(intent);
                                 // mGameManagerClient.setList
                             }
                         });
@@ -581,49 +493,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-
-    private class DebuggerListener implements GameManagerClient.Listener {
-
-        //private TextView mTextViewLobbyState;
-        //private TextView mTextViewGameplayState;
-        //private TextView mTextViewGameData;
-
-        @Override
-        public void onStateChanged(GameManagerState currentState, GameManagerState previousState) {
-            if (currentState.hasLobbyStateChanged(previousState)) {
-                Log.d(TAG, "onLobbyStateChange: " + currentState.getLobbyState());
-                //mTextViewLobbyState.setText(currentState.getLobbyState());
-            }
-            if (currentState.hasGameplayStateChanged(previousState)) {
-                Log.d(TAG, "onGameplayStateChanged: " + currentState);
-                //mTextViewGameplayState.setText(
-                    //    currentState.getGameplayState());
-            }
-            if (currentState.hasGameDataChanged(previousState)) {
-                String text = currentState.getGameData() != null
-                        ? currentState.getGameData().toString() : "";
-                Log.d(TAG, "onGameDataChanged: " + text);
-                //if(text=="DEATH"){
-                //}
-                //mTextViewGameData.setText(text);
-            }
-        }
-
-        @Override
-        public void onGameMessageReceived(String s, JSONObject jsonObject) {
-
-            if (s.equals(mGameManagerClient.getLastUsedPlayerId())) {
-                try {
-                    if (jsonObject.get("message").equals("You are now playing")) {
-                        Log.d(TAG, "The message: " + jsonObject.get("message"));
-                        v.vibrate(400);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     private class ConnectionFailedListener implements
             GoogleApiClient.OnConnectionFailedListener {
@@ -716,6 +585,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    public static GameManagerClient getGameManagerClient(){
+        return mGameManagerClient;
+    }
 }
 
 
