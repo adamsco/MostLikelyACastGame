@@ -1,7 +1,7 @@
 
 
 function CurveGame(gameManager) {
-	this.gameManager = gameManager;
+	this.gameManager = gameManager;	
 	console.log('game manager set' + this.gameManager);
 };
 
@@ -14,7 +14,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 	//If first player open lobby 
 	//Else check if lobby is open, if it is then add player to the lobby if it is not then tell player to wait for the next round
 	var availablePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.AVAILABLE);
-	console.log('Vailable players: ' + availablePlayers);
+	console.log('Available players: ' + availablePlayers);
 	
 	if(this.gameManager.getLobbyState()==cast.receiver.games.LobbyState.CLOSED){
 		if(availablePlayers==1){//Player is first player in game so open lobby
@@ -25,6 +25,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 			var playerId = event.playerInfo.playerId;
 			var message = { message: 'LOBBY_closed' };
 			this.gameManager.sendGameMessageToPlayer(playerId, message);
+			this.gameManager.updatePlayerState(playerId,cast.receiver.games.PlayerState.IDLE, true);
 		}		
 	}
 	
@@ -61,11 +62,14 @@ CurveGame.prototype.onPlayerPlaying = function(event) {
 };
 CurveGame.prototype.onPlayerDropped = function(event) {
 	//Remove player from lobby or game
+	console.log('Player dropped');
 };
 CurveGame.prototype.onPlayerQuit = function(event) {
 	//Remove player from lobby or game
+	console.log('Player quit');
 	if (window.castReceiverManager.getSenders().length == 0) {//If all player left close the app
-			window.close();
+			//window.close();
+			console.log('App closed');
 	}
 };
 CurveGame.prototype.onPlayerDataChanged = function(event) {
@@ -95,12 +99,25 @@ CurveGame.prototype.onGameLoading = function() {};
 CurveGame.prototype.onGameRunning = function() {};
 CurveGame.prototype.onGamePaused = function() {};
 CurveGame.prototype.onGameShowingInfoScreen = function() {};
-CurveGame.prototype.onLobbyOpen = function(event) {
-	
+CurveGame.prototype.onLobbyOpen = function(event) {	
 	console.log('Lobby opened');
+	
+	//Set all idle player to available so they join the lobby	
+	var idlePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.IDLE);
+	for (var i = 0; i < idlePlayers.length; i++) {
+		
+		var playerId = idlePlayers[i].playerId;
+		this.gameManager.updatePlayerState(playerId,cast.receiver.games.PlayerState.AVAILABLE, true);		
+		var message = { message: 'LOBBY_opened' };
+		this.gameManager.sendGameMessageToPlayer(playerId, message);
+	}	
+	this.gameManager.broadcastGameManagerStatus();
+	
+
 };
 CurveGame.prototype.onLobbyClosed = function(event) {
 	console.log('Lobby closed');
+	window.castReceiverManager.setApplicationState("A game is running");
 };
 
 CurveGame.prototype.checkIfAllReady = function(){
@@ -120,7 +137,14 @@ CurveGame.prototype.checkIfAllReady = function(){
 		console.log('Game started');
 		switchState();
 		
+		//Change application message
+		window.castReceiverManager.setApplicationState("Game is available to join");
 	}
 	this.gameManager.broadcastGameManagerStatus();
 };
+
+CurveGame.prototype.openLobby(){
+	this.gameManager.updateLobbyState(cast.receiver.games.LobbyState.OPEN, true);
+	this.gameManager.broadcastGameManagerStatus();
+}
 

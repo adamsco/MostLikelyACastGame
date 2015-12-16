@@ -24,6 +24,7 @@ var bunny;
 var view;
 var ctx;
 var isRunning = true;
+var curveGame;
 //gameInit();
 
 function switchState(){
@@ -210,6 +211,10 @@ function animate() {
 }
 function rotatePlayer(player){
    player.texture.rotation += player.turn*rs;
+}
+
+function setCurveGame(cg){
+	curveGame = cg;
 }
 
 function parseCol(color, toNumber) {

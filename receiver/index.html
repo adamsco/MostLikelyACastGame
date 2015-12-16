@@ -57,7 +57,7 @@ limitations under the License.
         // handler for the 'ready' event
         castReceiverManager.onReady = function(event) {
           console.log('Received Ready event: ' + JSON.stringify(event.data));
-          window.castReceiverManager.setApplicationState("Application status is ready...");
+          window.castReceiverManager.setApplicationState("Game is available to join");
         };
         
         // handler for 'senderconnected' event
@@ -111,7 +111,7 @@ limitations under the License.
 
 		/** @suppress {missingRequire} */
 		game = new CurveGame(gameManager);
-		
+		setCurveGame(game);
 		gameManager.addGameManagerListener(game);
 		console.log('Game started' );
 		
