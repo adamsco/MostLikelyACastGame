@@ -3,8 +3,8 @@ var colorTable =["#0C5DA5", "#C6F500", "#FF3D00", "#00A383", "#FF9500", "#AD009F
 var dRatio = 0.96;
 GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
-var ms = 7;
-var rs = 0.1;
+var ms = 2;
+var rs = 0.05;
 var scaleTrail = 0.6;
 var scalePlayer = 0.5;
 var enabled = false;
@@ -53,10 +53,10 @@ function gameInit(){
       // create a renderer instance.
       renderer = PIXI.autoDetectRenderer(GAME_WIDTH, GAME_HEIGHT);
       renderCanvas = new PIXI.CanvasRenderer(GAME_WIDTH, GAME_HEIGHT);
-      if(tailTextures.length <1){
+      if(loader == undefined){
 
       loader = PIXI.loader
-         .add('image1', 'img/0C5DA5.png')
+         .add('image1', 'img2/0C5DA5.png')
          .add('image2', 'img/C6F500.png')
          .add('image3', 'img/FF3D00.png')
          .add('image4', 'img/00A383.png')
@@ -150,8 +150,8 @@ function inputController() {
 }
 
 function inputFromMobile(turnValue, playerNumber){
-	playerList[playerNumber].turn = turnValue; 
-} 
+	playerList[playerNumber].turn = turnValue;
+}
 
 function resize() {
 
@@ -198,6 +198,8 @@ function animatePlayer( player , count ){
          sprite.anchor = player.anchor;
          //clone
          var tempPos = JSON.parse(JSON.stringify(player.position));
+         var tempRot = JSON.parse(JSON.stringify(player.rotation));
+         sprite.rotation = tempRot
          sprite.position.x = tempPos.x;
          sprite.position.y = tempPos.y;
          sprite.scale.x = scaleTrail;
