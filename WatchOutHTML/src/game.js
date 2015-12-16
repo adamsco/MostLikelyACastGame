@@ -24,6 +24,7 @@ var view;
 var ctx;
 var isRunning = true;
 gameInit();
+var tails = [];
 
 function switchState(){
    if(document.getElementById('board').rows.length >1){
@@ -42,10 +43,11 @@ function switchState(){
 function gameInit(){
    if(enabled){
       alive = [];
+      tails =[];
       playerList = [];
       isRunning = true;
       stage = new PIXI.Container();
-      stage.cacheAsBitMap = true;
+      //stage.cacheAsBitMap = true;
 
       // create a renderer instance.
       renderer = PIXI.autoDetectRenderer(GAME_WIDTH, GAME_HEIGHT);
@@ -65,6 +67,7 @@ function gameInit(){
       });
       for(var i = 1; i< document.getElementById('board').rows.length; i++){
          createPlayer();
+         stage.addChild(tails[i-1]);
       }
 
    }
@@ -96,6 +99,8 @@ function createPlayer(){
    playerList[playerList.length-1].texture.tint = playerList[playerList.length-1].texture.playerColor;
    playerList[playerList.length-1].texture.position.x = (Math.random() * GAME_WIDTH);
    playerList[playerList.length-1].texture.position.y = (Math.random() * GAME_HEIGHT*0.5)+GAME_HEIGHT*0.5;
+   //each player needs a particleContainer
+   tails.push(new PIXI.ParticleContainer());
 
    stage.addChild(playerList[playerList.length-1].texture);
    alive.push(true);
@@ -150,7 +155,7 @@ function didCollide(x,y,rot){
 function animatePlayer( player , count ){
    if(player != undefined && alive[count]){
       //playercolission?
-      if(didCollide(player.position.x, player.position.y, player.rotation)){
+      /*if(didCollide(player.position.x, player.position.y, player.rotation)){
             alive[count] = false;
             addPoints();//add points to all players still alive
             var keepGoing = 0;
@@ -160,7 +165,7 @@ function animatePlayer( player , count ){
             }
             if(keepGoing < 2)
                isRunning = false;
-      }
+      }*/
       if(renderCount == 0){
          //add trail
          var sprite = new PIXI.Sprite.fromImage('img/trail.png');
@@ -172,7 +177,10 @@ function animatePlayer( player , count ){
          sprite.scale.x = scaleTrail;
          sprite.scale.y = scaleTrail;
          sprite.tint = player.playerColor;
-         stage.addChild(sprite);
+
+         tails[0].addChild(sprite);
+         console.log("stage")
+         console.log(tails[0]);
       }
 
       //then move player
@@ -185,9 +193,9 @@ function animate() {
       renderCount = (renderCount+1) % renderIntensity;
       requestAnimationFrame( animate );
       //texture for collidecheck
-      view = renderCanvas.view;
-      renderCanvas.render(stage);
-      ctx = view.getContext("2d");
+      //view = renderCanvas.view;
+      //renderCanvas.render(stage);
+      //ctx = view.getContext("2d");
 
       if(isRunning){
          var count = 0;
