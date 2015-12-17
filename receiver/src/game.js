@@ -224,11 +224,11 @@ function animatePlayer( player , count ){
             var sprite = getTexture(count % 8);
             sprite.anchor = player.texture.anchor;
             //clone
-            var tempPos = JSON.parse(JSON.stringify(player.texture.position));
-            var tempRot = JSON.parse(JSON.stringify(player.texture.rotation));
-            sprite.rotation = tempRot
-            sprite.position.x = tempPos.x;
-            sprite.position.y = tempPos.y;
+            var tempRot = {rotation: player.texture.rotation};
+            var tempPos = {x: player.texture.position.x, y: player.texture.position.y};
+
+            sprite.rotation = tempRot.rotation;
+            sprite.position = tempPos;
             sprite.scale.x = scaleTrail;
             sprite.scale.y = scaleTrail;
             //sprite.tint = player.playerColor;
