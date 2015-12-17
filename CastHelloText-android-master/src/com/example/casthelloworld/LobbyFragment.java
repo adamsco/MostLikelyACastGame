@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.google.android.gms.cast.games.GameManagerClient;
@@ -21,13 +22,13 @@ import org.json.JSONObject;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LoginFragment.OnFragmentInteractionListener} interface
+ * {@link LobbyFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link LoginFragment#newInstance} factory method to
+ * Use the {@link LobbyFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class LoginFragment extends Fragment {
+public class LobbyFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -52,15 +53,15 @@ public class LoginFragment extends Fragment {
      * @return A new instance of fragment LoginFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LoginFragment newInstance(String param1, String param2) {
-        LoginFragment fragment = new LoginFragment();
+    public static LobbyFragment newInstance(String param1, String param2) {
+        LobbyFragment fragment = new LobbyFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public LoginFragment() {
+    public LobbyFragment() {
         // Required empty public constructor
     }
 
@@ -84,36 +85,21 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        final View view = inflater.inflate(R.layout.fragment_login, container, false);
+        final View view = inflater.inflate(R.layout.fragment_lobby, container, false);
 
-        Button loginButton = (Button) view.findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        final CheckBox readyCheckbox = (CheckBox) view.findViewById(R.id.readyCheckbox);
+        readyCheckbox.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                EditText x = (EditText) (view.findViewById(R.id.userNameText));
-                Log.d("USRNAMETEXT: ", x.getText().toString());
-                try {
-                    usernameMessage.put("username", x.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                // TODO Auto-generated method stub
+                if (readyCheckbox.isChecked()) {
+                    mGameManagerClient.sendPlayerReadyRequest(null);
+                    System.out.println("Checked");
+                } else {
+                    mGameManagerClient.sendPlayerAvailableRequest(null);
+                    System.out.println("Un-Checked");
                 }
-                Log.d("CLICKLOGIN", "getGCM - getClient");
-                System.out.println(mGameManagerClient);
-               mGameManagerClient.sendPlayerAvailableRequest(null, usernameMessage);
-
-                if( mGameManagerClient.getCurrentState().getLobbyState() == mGameManagerClient.LOBBY_STATE_CLOSED){
-                    ((MainActivity) getActivity()).lobbyClosed();
-                } else if ( mGameManagerClient.getCurrentState().getLobbyState() == mGameManagerClient.LOBBY_STATE_OPEN){
-                    ((MainActivity) getActivity()).lobbyOpen();
-                }
-            }
-        });
-
-        Button readyButton = (Button) view.findViewById(R.id.readyButton);
-        readyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mGameManagerClient.sendPlayerReadyRequest(null);
             }
         });
 

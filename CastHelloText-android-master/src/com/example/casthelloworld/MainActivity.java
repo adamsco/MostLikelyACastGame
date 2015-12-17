@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private JSONObject directionMessage;
     private Vibrator v;
     private String playerId;
+    private boolean waiting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         transaction.addToBackStack(null);
         transaction.commit();
 
+        waiting = false;
 
         m_lastMagFields = new float[3];
         m_lastAccels = new float[3];
@@ -406,6 +408,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    public void lobbyClosed() {
+        waiting = true;
+        Fragment fragment = new MatchOngoingFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main, fragment, "first");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void lobbyOpen() {
+        Fragment fragment = new LobbyFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main, fragment, "first");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
     /**
      * Callback for MediaRouter events
      */
@@ -622,25 +641,55 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         @Override
         public void onGameMessageReceived(String s, JSONObject jsonObject) {
-            Log.d("ONMSGRECIEVE", s);
-            if (s.equals(mGameManagerClient.getLastUsedPlayerId())) {
+            try {
+                Log.d("ONMSGRECIEVE", (String) jsonObject.get("message"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            //if (s.equals(mGameManagerClient.getLastUsedPlayerId())) {
                 try {
                     if (jsonObject.get("message").equals("LOBBY_join")){
-                        //Intent intent = new Intent(LoginActivity.this, LobbyActivity.class);
-                        //startActivity(intent);
                         Log.d("LOBBY", "join");
-
+                        Fragment fragment = new LobbyFragment();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.main, fragment, "first");
+                        transaction.addToBackStack(null);
+                        transaction.commit();
                     } else if (jsonObject.get("message").equals("LOBBY_closed")){
-                        //Intent intent = new Intent(LoginActivity.this, MatchOngoingActivity.class);
-                        //startActivity(intent);
-
+                        waiting = true;
+                        Fragment fragment = new MatchOngoingFragment();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.main, fragment, "first");
+                        transaction.addToBackStack(null);
+                        transaction.commit();
                         Log.d("LOBBY", "close");
+                    } else if (jsonObject.get("message").equals("You are now playing")){
+                        startVoiceRecognitionActivity();
+                        Fragment fragment = new PlayFragment();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.main, fragment, "first");
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Log.d("LOBBY", "close");
+                    } else if (jsonObject.get("message").equals("LOBBY_open")){
+                        waiting = false;
+                        Fragment fragment = new LobbyFragment();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.main, fragment, "first");
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Log.d("LOBBY", "close");
+                    } else if (jsonObject.get("message").equals("SCORE_update") && waiting){
+                        String leader = (String) jsonObject.get("leader");
+                        int leader_score = (int) jsonObject.get("leader_score");
+                        int goal_score = (int) jsonObject.get("goal_score");
+                        MatchOngoingFragment.updateStandings(leader, ""+leader_score, ""+goal_score);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        }
+        //}
     }
 
     private class ConnectionFailedListener implements

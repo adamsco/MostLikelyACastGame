@@ -21,13 +21,13 @@ import org.json.JSONObject;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LoginFragment.OnFragmentInteractionListener} interface
+ * {@link PlayFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link LoginFragment#newInstance} factory method to
+ * Use the {@link PlayFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class LoginFragment extends Fragment {
+public class PlayFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -52,15 +52,15 @@ public class LoginFragment extends Fragment {
      * @return A new instance of fragment LoginFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LoginFragment newInstance(String param1, String param2) {
-        LoginFragment fragment = new LoginFragment();
+    public static PlayFragment newInstance(String param1, String param2) {
+        PlayFragment fragment = new PlayFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public LoginFragment() {
+    public PlayFragment() {
         // Required empty public constructor
     }
 
@@ -84,38 +84,9 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        final View view = inflater.inflate(R.layout.fragment_login, container, false);
+        final View view = inflater.inflate(R.layout.fragment_play, container, false);
 
         Button loginButton = (Button) view.findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditText x = (EditText) (view.findViewById(R.id.userNameText));
-                Log.d("USRNAMETEXT: ", x.getText().toString());
-                try {
-                    usernameMessage.put("username", x.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.d("CLICKLOGIN", "getGCM - getClient");
-                System.out.println(mGameManagerClient);
-               mGameManagerClient.sendPlayerAvailableRequest(null, usernameMessage);
-
-                if( mGameManagerClient.getCurrentState().getLobbyState() == mGameManagerClient.LOBBY_STATE_CLOSED){
-                    ((MainActivity) getActivity()).lobbyClosed();
-                } else if ( mGameManagerClient.getCurrentState().getLobbyState() == mGameManagerClient.LOBBY_STATE_OPEN){
-                    ((MainActivity) getActivity()).lobbyOpen();
-                }
-            }
-        });
-
-        Button readyButton = (Button) view.findViewById(R.id.readyButton);
-        readyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mGameManagerClient.sendPlayerReadyRequest(null);
-            }
-        });
 
         return view;
     }
