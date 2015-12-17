@@ -3,7 +3,7 @@ var colorTable =["#0C5DA5", "#C6F500", "#FF3D00", "#00A383", "#FF9500", "#AD009F
 var dRatio = 0.96;
 GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
-var ms = 7;
+var ms = 2;
 var rs = 0.15;
 var scaleTrail = 0.6;
 var scalePlayer = 0.5;
@@ -224,11 +224,11 @@ function animatePlayer( player , count ){
             var sprite = getTexture(count % 8);
             sprite.anchor = player.texture.anchor;
             //clone
-            var tempPos = JSON.parse(JSON.stringify(player.texture.position));
-            var tempRot = JSON.parse(JSON.stringify(player.texture.rotation));
-            sprite.rotation = tempRot
-            sprite.position.x = tempPos.x;
-            sprite.position.y = tempPos.y;
+            var tempRot = {rotation: player.texture.rotation};
+            var tempPos = {x: player.texture.position.x, y: player.texture.position.y};
+
+            sprite.rotation = tempRot.rotation;
+            sprite.position = tempPos;
             sprite.scale.x = scaleTrail;
             sprite.scale.y = scaleTrail;
             //sprite.tint = player.playerColor;
