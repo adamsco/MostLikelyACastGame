@@ -63,6 +63,7 @@ CurveGame.prototype.onPlayerReady = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is ready');
 	
 	var playerNumber = this.lobbyList.indexOf(playerId); 
+	console.log('PLayer number: '+ playerNumber);
 	playerReady(playerNumber);
 	var playerId = event.playerInfo.playerId;
 	var message = { message: 'You are now ready' };
