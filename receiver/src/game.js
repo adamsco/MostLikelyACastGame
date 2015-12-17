@@ -27,7 +27,6 @@ var isRunning = true;
 var curveGame;
 //gameInit();
 var tails = [];
-//var tailTextures =[];
 
 function switchState(){
    if(document.getElementById('board').rows.length >1){
@@ -59,13 +58,13 @@ function gameInit(){
 
       loader = PIXI.loader
          .add('image1', 'img2/0C5DA5.png')
-         .add('image2', 'img/C6F500.png')
-         .add('image3', 'img/FF3D00.png')
-         .add('image4', 'img/00A383.png')
-         .add('image5', 'img/FF9500.png')
-         .add('image6', 'img/AD009F.png')
-         .add('image7', 'img/ED6B95.png')
-         .add('image8', 'img/FFFC73.png')
+         .add('image2', 'img2/C6F500.png')
+         .add('image3', 'img2/FF3D00.png')
+         .add('image4', 'img2/00A383.png')
+         .add('image5', 'img2/FF9500.png')
+         .add('image6', 'img2/AD009F.png')
+         .add('image7', 'img2/ED6B95.png')
+         .add('image8', 'img2/FFFC73.png')
          .once('complete', function(loader, resources){
             requestAnimationFrame( animate );
          })
@@ -195,6 +194,7 @@ function drawTimer(pNr){
       }, pauseTime);
    }
 }
+
 function animatePlayer( player , count ){
    if(player.texture != undefined && alive[count]){
       //playercolission?
@@ -242,7 +242,7 @@ function animatePlayer( player , count ){
 }
 function animate() {
    if(enabled){
-      requestAnimationFrame( animate );
+
       //texture for collidecheck
       view = renderCanvas.view;
       renderCanvas.render(stage);
@@ -260,6 +260,10 @@ function animate() {
       }
       // render the stage
       renderer.render(stage);
+      //save tails as 1 img
+
+      requestAnimationFrame( animate );
+
    }
 }
 //returns the preloaded texture as a texture object
@@ -360,6 +364,7 @@ function resetGameBoard() {
       if(player.getTimer != null){
          clearTimeout(player.getTimer);
       }
+
       count ++;
    });
 
