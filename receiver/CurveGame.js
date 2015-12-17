@@ -54,6 +54,8 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 			playerNotReady(index);
 		}
 	}	
+	var message = { message: 'Your are available' };
+	this.gameManager.sendGameMessageToPlayer(playerId, message);
 	this.gameManager.broadcastGameManagerStatus();
 };
 
@@ -63,7 +65,10 @@ CurveGame.prototype.onPlayerReady = function(event) {
 	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);	
 	var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, readyPlayers);	
 	playerReady(playerNumber);
-	
+	var playerId = event.playerInfo.playerId;
+	var message = { message: 'You are now ready' };
+	this.gameManager.sendGameMessageToPlayer(playerId, message);	
+	this.gameManager.broadcastGameManagerStatus();
 	//Check if everyone is ready
 	this.checkIfAllReady();
 };
@@ -73,7 +78,8 @@ CurveGame.prototype.onPlayerPlaying = function(event) {
 	// Tell player game is about to start
 	var playerId = event.playerInfo.playerId;
 	var message = { message: 'You are now playing' };
-	this.gameManager.sendGameMessageToPlayer(playerId, message);
+	this.gameManager.sendGameMessageToPlayer(playerId, message);	
+	this.gameManager.broadcastGameManagerStatus();
 };
 CurveGame.prototype.onPlayerDropped = function(event) {
 	//Remove player from lobby or game
