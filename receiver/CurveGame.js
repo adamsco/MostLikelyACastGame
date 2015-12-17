@@ -53,8 +53,10 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 		}else{
 			playerNotReady(index);
 		}
-	}
-	
+	}	
+	var message = { message: 'You are available' };
+	this.gameManager.sendGameMessageToPlayer(playerId, message);
+	this.gameManager.broadcastGameManagerStatus();
 };
 
 CurveGame.prototype.onPlayerReady = function(event) {
@@ -63,7 +65,10 @@ CurveGame.prototype.onPlayerReady = function(event) {
 	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);	
 	var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, readyPlayers);	
 	playerReady(playerNumber);
-	
+	var playerId = event.playerInfo.playerId;
+	var message = { message: 'You are now ready' };
+	this.gameManager.sendGameMessageToPlayer(playerId, message);	
+	this.gameManager.broadcastGameManagerStatus();
 	//Check if everyone is ready
 	this.checkIfAllReady();
 };
@@ -73,7 +78,8 @@ CurveGame.prototype.onPlayerPlaying = function(event) {
 	// Tell player game is about to start
 	var playerId = event.playerInfo.playerId;
 	var message = { message: 'You are now playing' };
-	this.gameManager.sendGameMessageToPlayer(playerId, message);
+	this.gameManager.sendGameMessageToPlayer(playerId, message);	
+	this.gameManager.broadcastGameManagerStatus();
 };
 CurveGame.prototype.onPlayerDropped = function(event) {
 	//Remove player from lobby or game
@@ -115,7 +121,6 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	//playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
 	
 	playerNumber = this.lobbyList.indexOf(event.playerInfo.playerId);
-	console.log('playernumber: ' + playerNumber);
 		
 	inputFromMobile(message.direction, playerNumber);
 };
@@ -149,7 +154,8 @@ CurveGame.prototype.onLobbyOpen = function(event) {
 };
 CurveGame.prototype.onLobbyClosed = function(event) {
 	console.log('Lobby closed');
-	window.castReceiverManager.setApplicationState("A game is running");
+	window.castReceiverManager.setApplicationState("A game is running");	
+	this.gameManager.broadcastGameManagerStatus();
 };
 
 CurveGame.prototype.checkIfAllReady = function(){
@@ -191,7 +197,7 @@ CurveGame.prototype.updateScore = function(leaderName, score){
 		var message = { leader: ''+ leaderName, leaderScore: score[0]};
 		this.gameManager.sendGameMessageToPlayer(playerId, message);
 	}
-}
+};
 
 CurveGame.prototype.getPlayerNumber = function(playerId, playerList){
 	var playerNumber = -1;
@@ -203,5 +209,26 @@ CurveGame.prototype.getPlayerNumber = function(playerId, playerList){
 	}
 	
 	return playerNumber;
+};
+CurveGame.prototype.updateLobbyList = function(){
+	var droppedPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.DROPPED);
+	var quitPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.QUIT);
+	
+	for (var i = 0; i < this.lobbyList.length; i++){
+		for (var j = 0; j < droppedPlayers.length; j++) {
+			index = lobbyList.indexOf(droppedPlayers[j].playerId);
+			
+			lobbyList.splice(index,1);
+			leaveGame(index);
+		}
+		for (var j = 0; j < quitPlayers.length; j++) {
+			index = lobbyList.indexOf(quitPlayers[j].playerId);
+			
+			lobbyList.splice(index,1);
+			leaveGame(index);
+		}
+	}
+	
+
 };
 
