@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.casthelloworld.LoginFragment">
+
+    <EditText
+        android:layout_width="251dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/userNameText"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/loginButton"
+        android:layout_alignStart="@+id/loginButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Enter name:"
+        android:id="@+id/textView6"
+        android:layout_gravity="left|center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/userNameText"
+        android:layout_toStartOf="@+id/userNameText"
+        android:layout_marginRight="22dp"
+        android:layout_marginEnd="22dp" />
+
+    <Button
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:id="@+id/loginButton"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginTop="24dp"
+        android:layout_below="@+id/userNameText"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

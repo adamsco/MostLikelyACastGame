@@ -40,6 +40,8 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private boolean mApplicationStarted;
     private boolean mWaitingForReconnect;
     private String mSessionId;
-    private GameManagerClient mGameManagerClient;
+    private static GameManagerClient mGameManagerClient;
     private SensorManager sManager;
     private float lastVal;
     private float[] m_lastMagFields;
@@ -104,6 +106,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Fragment fragment = new ConnectFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.main, fragment, "first");
+        transaction.addToBackStack(null);
+        transaction.commit();
 
 
         m_lastMagFields = new float[3];
@@ -126,14 +133,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // When the user clicks on the button, use Android voice recognition to
         // get text
-        Button voiceButton = (Button) findViewById(R.id.voiceButton);
+        /*Button voiceButton = (Button) findViewById(R.id.voiceButton);
         voiceButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 startVoiceRecognitionActivity();
                 mGameManagerClient.sendPlayerReadyRequest(null);
             }
-        });
+        });*/
 
         // Configure Cast device discovery
         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
@@ -569,7 +576,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             public void onResult(GameManagerClient.GameManagerInstanceResult result) {
                                 mGameManagerClient = result.getGameManagerClient();
                                 Log.d(TAG, "GameManagerClient onResult: " + result.getGameManagerClient());
-                                mGameManagerClient.sendPlayerAvailableRequest(null, null);
+                                Fragment fragment = new LoginFragment();
+                                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                                transaction.replace(R.id.main, fragment, "first");
+                                transaction.addToBackStack(null);
+                                transaction.commit();
                                 mGameManagerClient.setListener(new DebuggerListener());
                                 // mGameManagerClient.setList
                             }
@@ -611,12 +622,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         @Override
         public void onGameMessageReceived(String s, JSONObject jsonObject) {
-
+            Log.d("ONMSGRECIEVE", s);
             if (s.equals(mGameManagerClient.getLastUsedPlayerId())) {
                 try {
-                    if (jsonObject.get("message").equals("You are now playing")) {
-                        Log.d(TAG, "The message: " + jsonObject.get("message"));
-                        v.vibrate(400);
+                    if (jsonObject.get("message").equals("LOBBY_join")){
+                        //Intent intent = new Intent(LoginActivity.this, LobbyActivity.class);
+                        //startActivity(intent);
+                        Log.d("LOBBY", "join");
+
+                    } else if (jsonObject.get("message").equals("LOBBY_closed")){
+                        //Intent intent = new Intent(LoginActivity.this, MatchOngoingActivity.class);
+                        //startActivity(intent);
+
+                        Log.d("LOBBY", "close");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -714,6 +732,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.d(TAG, "onMessageReceived: " + message);
         }
 
+    }
+
+    public static GameManagerClient getmGameManagerClient(){
+        return mGameManagerClient;
     }
 
 }
