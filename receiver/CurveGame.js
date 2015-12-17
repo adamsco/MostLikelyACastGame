@@ -194,7 +194,7 @@ CurveGame.prototype.updateScore = function(leaderName, score){
 	var idlePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.IDLE);
 	for (var i = 0; i < idlePlayers.length; i++) {
 		var playerId = idlePlayers[i].playerId;
-		var message = { leader: ''+ leaderName, leaderScore: score[0]};
+		var message = { leader: ''+ leaderName, leader_score: score[0], goal_score: 10};
 		this.gameManager.sendGameMessageToPlayer(playerId, message);
 	}
 };
