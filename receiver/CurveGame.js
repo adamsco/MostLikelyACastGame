@@ -53,8 +53,8 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 		}else{
 			playerNotReady(index);
 		}
-	}
-	
+	}	
+	this.gameManager.broadcastGameManagerStatus();
 };
 
 CurveGame.prototype.onPlayerReady = function(event) {
@@ -115,7 +115,6 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	//playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
 	
 	playerNumber = this.lobbyList.indexOf(event.playerInfo.playerId);
-	console.log('playernumber: ' + playerNumber);
 		
 	inputFromMobile(message.direction, playerNumber);
 };
@@ -149,7 +148,8 @@ CurveGame.prototype.onLobbyOpen = function(event) {
 };
 CurveGame.prototype.onLobbyClosed = function(event) {
 	console.log('Lobby closed');
-	window.castReceiverManager.setApplicationState("A game is running");
+	window.castReceiverManager.setApplicationState("A game is running");	
+	this.gameManager.broadcastGameManagerStatus();
 };
 
 CurveGame.prototype.checkIfAllReady = function(){
@@ -191,7 +191,7 @@ CurveGame.prototype.updateScore = function(leaderName, score){
 		var message = { leader: ''+ leaderName, leaderScore: score[0]};
 		this.gameManager.sendGameMessageToPlayer(playerId, message);
 	}
-}
+};
 
 CurveGame.prototype.getPlayerNumber = function(playerId, playerList){
 	var playerNumber = -1;
@@ -203,5 +203,26 @@ CurveGame.prototype.getPlayerNumber = function(playerId, playerList){
 	}
 	
 	return playerNumber;
+};
+CurveGame.prototype.updateLobbyList = function(){
+	var droppedPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.DROPPED);
+	var quitPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.QUIT);
+	
+	for (var i = 0; i < this.lobbyList.length; i++){
+		for (var j = 0; j < droppedPlayers.length; j++) {
+			index = lobbyList.indexOf(droppedPlayers[j].playerId);
+			
+			lobbyList.splice(index,1);
+			leaveGame(index);
+		}
+		for (var j = 0; j < quitPlayers.length; j++) {
+			index = lobbyList.indexOf(quitPlayers[j].playerId);
+			
+			lobbyList.splice(index,1);
+			leaveGame(index);
+		}
+	}
+	
+
 };
 

@@ -38,3 +38,6 @@ function playerNotReady(playerNumber){
    cell.innerHTML ="No";
    cell.style.color = "red";
 }
+function getName(playerNumber){
+	return document.getElementById('board').rows[playerNumber+1].cells[0].innerHTML;
+}
