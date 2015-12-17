@@ -3,7 +3,8 @@ var colorTable =["#0C5DA5", "#C6F500", "#FF3D00", "#00A383", "#FF9500", "#AD009F
 var dRatio = 0.96;
 GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
-var ms = 2;
+
+var ms = 7;
 var rs = 0.05;
 var scaleTrail = 0.6;
 var scalePlayer = 0.5;
