@@ -3,7 +3,6 @@ var colorTable =["#0C5DA5", "#C6F500", "#FF3D00", "#00A383", "#FF9500", "#AD009F
 var dRatio = 0.96;
 GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
-
 var ms = 7;
 var rs = 0.15;
 var scaleTrail = 0.6;
@@ -15,7 +14,9 @@ var winCondition = 10;
 // create a renderer instance.
 var renderer;
 var renderCanvas;
-
+var pauseTime = 500;
+var runTimeBase = 1500;
+var runTimeMax = 2500;
 var playerList;
 var alive = [];
 var bunny;
@@ -26,7 +27,7 @@ var isRunning = true;
 var curveGame;
 //gameInit();
 var tails = [];
-tailTextures =[];
+//var tailTextures =[];
 
 function switchState(){
    if(document.getElementById('board').rows.length >1){
@@ -108,7 +109,10 @@ function createPlayer(){
    var player ={
       texture: text,
       turn: 0,
-      score: 0
+      score: 0,
+      draw: false,
+      timer: false,
+      getTimer: null
    };
    playerList.push(player);
    playerList[playerList.length-1].texture.scale.x = scalePlayer;
@@ -169,8 +173,8 @@ function resize() {
    renderer.resize(Math.ceil(GAME_WIDTH * ratio),
                   Math.ceil(GAME_HEIGHT * ratio));
 }
-function didCollide(x,y,rot){
-   var col = ctx.getImageData(x+12*Math.sin(rot), y-12*Math.cos(rot),1,1).data;
+function didCollide(pos,rot){
+   var col = ctx.getImageData(pos.x+12*Math.sin(rot), pos.y-12*Math.cos(rot),1,1).data;
    if(col[0] > 0 || col[1] > 0 || col[2] > 0 || col[3] == 0){
       console.log("Its a hit!");
       console.log(col);
@@ -178,10 +182,23 @@ function didCollide(x,y,rot){
    }
    return false;
 }
+function drawTimer(pNr){
+   playerList[pNr].draw = !playerList[pNr].draw;
+   if(playerList[pNr].draw){
+      playerList[pNr].getTimer = setTimeout(function(){
+         drawTimer(pNr);
+      }, runTimeBase+Math.random()*runTimeMax);
+   }
+   else{
+      playerList[pNr].getTimer = setTimeout(function(){
+         drawTimer(pNr);
+      }, pauseTime);
+   }
+}
 function animatePlayer( player , count ){
-   if(player != undefined && alive[count]){
+   if(player.texture != undefined && alive[count]){
       //playercolission?
-      if(didCollide(player.position.x, player.position.y, player.rotation)){
+      if(didCollide(player.texture.position, player.texture.rotation)){
             alive[count] = false;
             addPoints();//add points to all players still alive
             var keepGoing = 0;
@@ -194,25 +211,33 @@ function animatePlayer( player , count ){
                roundEnd();
             }
       }
-         //add trail
-         str = "img/"+ colorTable[count % 8].slice(1) + ".png";
-         //console.log(str);
-         var sprite = getTexture(count % 8);
-         sprite.anchor = player.anchor;
-         //clone
-         var tempPos = JSON.parse(JSON.stringify(player.position));
-        // var tempRot = JSON.parse(JSON.stringify(player.rotation));
-         //sprite.rotation = tempRot
-         sprite.position.x = tempPos.x;
-         sprite.position.y = tempPos.y;
-         sprite.scale.x = scaleTrail;
-         sprite.scale.y = scaleTrail;
-         //sprite.tint = player.playerColor;
-         tails[count].addChild(sprite);
+         //init timer
+         if(player.timer == false){
+            console.log("init timer for: "+ count)
+            player.timer = true;
+            drawTimer(count);
+         }
+         if(player.draw){
+            //add trail
+            str = "img/"+ colorTable[count % 8].slice(1) + ".png";
+            //console.log(str);
+            var sprite = getTexture(count % 8);
+            sprite.anchor = player.texture.anchor;
+            //clone
+            var tempPos = JSON.parse(JSON.stringify(player.texture.position));
+            var tempRot = JSON.parse(JSON.stringify(player.texture.rotation));
+            sprite.rotation = tempRot
+            sprite.position.x = tempPos.x;
+            sprite.position.y = tempPos.y;
+            sprite.scale.x = scaleTrail;
+            sprite.scale.y = scaleTrail;
+            //sprite.tint = player.playerColor;
+            tails[count].addChild(sprite);
+         }
 
       //then move player
-      player.position.x += ms* Math.sin(player.rotation);
-      player.position.y -= ms* Math.cos(player.rotation);
+      player.texture.position.x += ms* Math.sin(player.texture.rotation);
+      player.texture.position.y -= ms* Math.cos(player.texture.rotation);
    }
 }
 function animate() {
@@ -226,7 +251,7 @@ function animate() {
       if(isRunning){
          var count = 0;
          playerList.forEach(function(player){
-            animatePlayer(player.texture, count);
+            animatePlayer(player, count);
             if(alive[count]){
                rotatePlayer(player);
             }
@@ -332,17 +357,21 @@ function resetGameBoard() {
       resetPlayer(player, count);
       tails[count] = new PIXI.ParticleContainer();
       stage.addChild(tails[count]);
+      if(player.getTimer != null){
+         clearTimeout(player.getTimer);
+      }
       count ++;
    });
 
    isRunning = true;
-   curveGame.updateScore('Jakob', getScore());
 }
 function resetPlayer(player, count){
    player.texture.position.x = 0.2*GAME_WIDTH + (Math.random() * GAME_WIDTH*0.6);
    player.texture.position.y =  0.2*GAME_HEIGHT + (Math.random() * GAME_HEIGHT*0.6);
    player.turn = 0;
    player.texture.rotation = Math.random() * 6.2;
+   player.draw = false;
+   player.timer = false;
    stage.addChild(player.texture);
 }
 function parseCol(color, toNumber) {
