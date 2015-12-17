@@ -201,8 +201,8 @@ function animatePlayer( player , count ){
          sprite.anchor = player.anchor;
          //clone
          var tempPos = JSON.parse(JSON.stringify(player.position));
-         var tempRot = JSON.parse(JSON.stringify(player.rotation));
-         sprite.rotation = tempRot
+        // var tempRot = JSON.parse(JSON.stringify(player.rotation));
+         //sprite.rotation = tempRot
          sprite.position.x = tempPos.x;
          sprite.position.y = tempPos.y;
          sprite.scale.x = scaleTrail;
