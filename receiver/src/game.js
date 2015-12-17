@@ -282,6 +282,7 @@ function resetGameBoard() {
    });
 
    isRunning = true;
+   curveGame.updateScore('Jakob', getScore());
 }
 function resetPlayer(player, count){
    player.texture.position.x = 0.2*GAME_WIDTH + (Math.random() * GAME_WIDTH*0.6);

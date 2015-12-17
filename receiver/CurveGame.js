@@ -40,6 +40,8 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 			
 			if(userName == ''){
 				userName = 'Missing name '+playerId;
+			}else if(userName == 'Malin'){
+				userName = 'Pixel_babe_1337';
 			}
 			
 			//add player to the lobby
@@ -118,15 +120,22 @@ CurveGame.prototype.onGameShowingInfoScreen = function() {};
 CurveGame.prototype.onLobbyOpen = function(event) {	
 	console.log('Lobby opened');
 	
-	//Set all idle player to available so they join the lobby	
+	//Send message to all idle players to let them know they can join the lobby
 	var idlePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.IDLE);
 	for (var i = 0; i < idlePlayers.length; i++) {
 		
-		var playerId = idlePlayers[i].playerId;
-		this.gameManager.updatePlayerState(playerId,cast.receiver.games.PlayerState.AVAILABLE, true);		
+		var playerId = idlePlayers[i].playerId;	
 		var message = { message: 'LOBBY_opened' };
 		this.gameManager.sendGameMessageToPlayer(playerId, message);
-	}	
+	}
+	
+	//Set all ready players to available
+	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
+	for (var i = 0; i < readyPlayers.length; i++) {
+		var playerId = readyPlayers[i].playerId;	
+		this.gameManager.updatePlayerState(playerId,cast.receiver.games.PlayerState.AVAILABLE, true);	
+	}
+	
 	this.gameManager.broadcastGameManagerStatus();
 	
 
@@ -159,10 +168,23 @@ CurveGame.prototype.checkIfAllReady = function(){
 	this.gameManager.broadcastGameManagerStatus();
 };
 
-CurveGame.prototype.openLobby = function(){
+CurveGame.prototype.openLobby = function(){// Call this when a game is done to begin setting up the next game
 	this.gameManager.updateLobbyState(cast.receiver.games.LobbyState.OPEN, true);
 	this.gameManager.broadcastGameManagerStatus();
 };
+
+CurveGame.prototype.updateScore = function(leaderName, score){
+	
+	score.sort();
+	score.reverse();
+	
+	var idlePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.IDLE);
+	for (var i = 0; i < idlePlayers.length; i++) {
+		var playerId = idlePlayers[i].playerId;
+		var message = { leader: ''+ leaderName, leaderScore: score[0]};
+		this.gameManager.sendGameMessageToPlayer(playerId, message);
+	}
+}
 
 CurveGame.prototype.getPlayerNumber = function(playerId, playerList){
 	var playerNumber = -1;
