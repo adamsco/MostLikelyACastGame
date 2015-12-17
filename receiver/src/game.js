@@ -173,7 +173,7 @@ function resize() {
                   Math.ceil(GAME_HEIGHT * ratio));
 }
 function didCollide(pos,rot){
-   var col = ctx.getImageData(pos.x+12*Math.sin(rot), pos.y-12*Math.cos(rot),1,1).data;
+   var col = ctx.getImageData(pos.x+24*Math.sin(rot), pos.y-24*Math.cos(rot),1,1).data;
    if(col[0] > 0 || col[1] > 0 || col[2] > 0 || col[3] == 0){
       console.log("Its a hit!");
       console.log(col);
