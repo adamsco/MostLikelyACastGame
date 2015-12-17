@@ -81,6 +81,9 @@ CurveGame.prototype.onPlayerDropped = function(event) {
 		var playerId = event.playerInfo.playerId;
 		var playerNumber = this.lobbyList.indexOf(playerId); 
 		leaveGame(playerNumber);
+		lobbyList.splice(playerNumber,1);
+	}else{//If game is running
+		
 	}
 	console.log('Player dropped');
 };
@@ -90,6 +93,7 @@ CurveGame.prototype.onPlayerQuit = function(event) {
 		var playerId = event.playerInfo.playerId;
 		var playerNumber = this.lobbyList.indexOf(playerId); 
 		leaveGame(playerNumber);
+		lobbyList.splice(playerNumber,1);
 	}
 	
 	console.log('Player quit');
@@ -106,9 +110,11 @@ CurveGame.prototype.onGameStatusTextChanged = function() {};
 CurveGame.prototype.onGameMessageReceived = function(event) {
 	//Inputs from players
 	var message = event.requestExtraMessageData;
-	var playingPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
+	//var playingPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
 	
-	playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
+	//playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
+	
+	playerNumber = lobbyList.indexOf(event.playerInfo.playerId);
 		
 	inputFromMobile(message.direction, playerNumber);
 };
