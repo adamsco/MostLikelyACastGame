@@ -347,7 +347,7 @@ function roundEnd(){
          resetGameBoard();
       }, 4500);
    }
-
+	curveGame.updateScore('Jakob',getScore());
    //setTimeout(countdown(), 3000);
 }
 function countdown(){
