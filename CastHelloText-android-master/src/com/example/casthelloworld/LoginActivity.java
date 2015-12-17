@@ -28,7 +28,7 @@ public class LoginActivity extends Activity {
 
         usernameMessage = new JSONObject();
 
-        mGameManagerClient = MainActivity.getGameManagerClient();
+        mGameManagerClient = GameConnectionManager.getGameManagerClient();
 
 
         Button voiceButton = (Button) findViewById(R.id.lobbyButton);
@@ -43,39 +43,10 @@ public class LoginActivity extends Activity {
                     e.printStackTrace();
                 }
                 mGameManagerClient.sendPlayerAvailableRequest(null, usernameMessage);
-                mGameManagerClient.setListener(new DebuggerListener());
             }
         });
 
 
-    }
-
-    private class DebuggerListener implements GameManagerClient.Listener {
-
-
-        @Override
-        public void onStateChanged(GameManagerState currentState, GameManagerState previousState) {
-
-        }
-
-        @Override
-        public void onGameMessageReceived(String s, JSONObject jsonObject) {
-            Log.d("ONMSGRECIEVE", s);
-            if (s.equals(mGameManagerClient.getLastUsedPlayerId())) {
-                try {
-                    if (jsonObject.get("message").equals("LOBBY_join")){
-                        Intent intent = new Intent(LoginActivity.this, LobbyActivity.class);
-                        startActivity(intent);
-
-                    } else if (jsonObject.get("message").equals("LOBBY_closed")){
-                        Intent intent = new Intent(LoginActivity.this, MatchOngoingActivity.class);
-                        startActivity(intent);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
 }
