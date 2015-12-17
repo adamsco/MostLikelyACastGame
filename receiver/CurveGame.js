@@ -54,7 +54,7 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 			playerNotReady(index);
 		}
 	}	
-	var message = { message: 'Your are available' };
+	var message = { message: 'You are available' };
 	this.gameManager.sendGameMessageToPlayer(playerId, message);
 	this.gameManager.broadcastGameManagerStatus();
 };
