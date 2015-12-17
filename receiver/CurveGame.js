@@ -115,6 +115,7 @@ CurveGame.prototype.onGameMessageReceived = function(event) {
 	//playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
 	
 	playerNumber = lobbyList.indexOf(event.playerInfo.playerId);
+	console.log('playernumber: ' playerNumber);
 		
 	inputFromMobile(message.direction, playerNumber);
 };
