@@ -15,13 +15,15 @@ import org.json.JSONObject;
 public class MatchOngoingActivity extends Activity {
 
     private GameManagerClient mGameManagerClient;
+    private GameConnectionManager GCM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_ongoing);
-        mGameManagerClient = MainActivity.getGameManagerClient();
+        GCM = GameConnectionManager.getInstance();
+        mGameManagerClient = GCM.getGameManagerClient();
         mGameManagerClient.setListener(new DebuggerListener());
     }
 

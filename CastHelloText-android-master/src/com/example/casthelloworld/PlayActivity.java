@@ -25,6 +25,7 @@ public class PlayActivity extends Activity implements SensorEventListener {
     private JSONObject directionMessage;
     GameManagerClient mGameManagerClient;
     SensorManager sManager;
+    private GameConnectionManager GCM;
 
 
     @Override
@@ -39,7 +40,8 @@ public class PlayActivity extends Activity implements SensorEventListener {
         m_orientation = new float[4];
         orientationVals = new float[3];
         directionMessage = new JSONObject();
-        mGameManagerClient = MainActivity.getGameManagerClient();
+        GCM = GameConnectionManager.getInstance();
+        mGameManagerClient = GCM.getGameManagerClient();
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
     }

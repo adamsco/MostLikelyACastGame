@@ -18,12 +18,14 @@ import org.json.JSONObject;
 public class LobbyActivity extends Activity {
 
     private GameManagerClient mGameManagerClient;
+    private GameConnectionManager GCM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
-        mGameManagerClient = MainActivity.getGameManagerClient();
+        GCM = GameConnectionManager.getInstance();
+        mGameManagerClient = GCM.getGameManagerClient();
 
         final CheckBox readyCheckBox = (CheckBox) findViewById(R.id.checkbox);
         readyCheckBox.setOnClickListener(new View.OnClickListener() {

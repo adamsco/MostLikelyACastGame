@@ -20,6 +20,7 @@ import org.json.JSONObject;
 public class LoginActivity extends Activity {
     private JSONObject usernameMessage;
     private GameManagerClient mGameManagerClient;
+    private GameConnectionManager GCM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +28,6 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         usernameMessage = new JSONObject();
-
-        mGameManagerClient = GameConnectionManager.getGameManagerClient();
 
 
         Button voiceButton = (Button) findViewById(R.id.lobbyButton);
@@ -42,7 +41,12 @@ public class LoginActivity extends Activity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mGameManagerClient.sendPlayerAvailableRequest(null, usernameMessage);
+
+                GCM = GameConnectionManager.getInstance();
+                mGameManagerClient = GCM.getGameManagerClient();
+                Log.d("CLICKLOGIN", "getGCM - getClient");
+                System.out.println(mGameManagerClient);
+               mGameManagerClient.sendPlayerAvailableRequest(null, usernameMessage);
             }
         });
 

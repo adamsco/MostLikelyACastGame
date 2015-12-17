@@ -333,7 +333,8 @@ public class MainActivity extends AppCompatActivity {
             if (status.isSuccess()) {
                 Log.d(TAG, "Launching game: " + appMetaData.getName());
                 mCastSessionId = result.getSessionId();
-                GCM = new GameConnectionManager(mApiClient, mCastSessionId);
+                GCM = GameConnectionManager.getInstance();
+                GCM.initGameManagerClient(mApiClient, mCastSessionId);
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
             } else {

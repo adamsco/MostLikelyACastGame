@@ -15,8 +15,16 @@ import org.json.JSONObject;
  * Created by Johan on 2015-12-17.
  */
 public class GameConnectionManager {
-    private static GameManagerClient mGameManagerClient;
-    public GameConnectionManager(GoogleApiClient mApiClient, String mCastSessionId){
+    private static GameConnectionManager instance = null;
+
+    private GameManagerClient mGameManagerClient;
+
+    protected GameConnectionManager() {
+        // Exists only to defeat instantiation.
+    }
+
+    public void initGameManagerClient(GoogleApiClient mApiClient, String mCastSessionId){
+
         GameManagerClient.getInstanceFor(mApiClient, mCastSessionId)
                 .setResultCallback(new ResultCallback<GameManagerClient.GameManagerInstanceResult>() {
                     @Override
@@ -29,6 +37,13 @@ public class GameConnectionManager {
                         // mGameManagerClient.setList
                     }
                 });
+    }
+
+    public static GameConnectionManager getInstance() {
+        if(instance == null) {
+            instance = new GameConnectionManager();
+        }
+        return instance;
     }
 
     private class DebuggerListener implements GameManagerClient.Listener {
@@ -62,7 +77,7 @@ public class GameConnectionManager {
         }
     }
 
-    public static GameManagerClient getGameManagerClient(){
+    public GameManagerClient getGameManagerClient(){
         return mGameManagerClient;
     }
 }
