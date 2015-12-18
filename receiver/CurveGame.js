@@ -77,7 +77,8 @@ CurveGame.prototype.onPlayerPlaying = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is playing');
 	// Tell player game is about to start
 	var playerId = event.playerInfo.playerId;
-	var message = { message: 'You are now playing' };
+	var playerNumber = this.lobbyList.indexOf(playerId); 
+	var message = { message: 'You are now playing', PLAYER_color: colorTable[playerNumber] };
 	this.gameManager.sendGameMessageToPlayer(playerId, message);	
 	this.gameManager.broadcastGameManagerStatus();
 };
