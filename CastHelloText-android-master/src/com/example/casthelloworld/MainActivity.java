@@ -665,7 +665,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         Log.d("LOBBY", "close");
                     } else if (jsonObject.get("message").equals("You are now playing")){
                         startVoiceRecognitionActivity();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("PLAYER_color", (String)jsonObject.get("PLAYER_color"));
                         Fragment fragment = new PlayFragment();
+                        fragment.setArguments(bundle);
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.main, fragment, "first");
                         transaction.addToBackStack(null);
