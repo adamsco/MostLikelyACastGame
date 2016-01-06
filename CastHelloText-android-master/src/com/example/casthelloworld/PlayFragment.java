@@ -82,6 +82,7 @@ public class PlayFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -115,6 +116,11 @@ public class PlayFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        ((MainActivity) getActivity()).disableOrientationListener();
     }
 
     /**

@@ -156,12 +156,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * Android voice recognition
      */
     private void startVoiceRecognitionActivity() {
-        /*
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.message_to_cast));
-        startActivityForResult(intent, REQUEST_CODE);*/
 
         sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
     }
@@ -229,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         {
             return;
         }
-        //float x = sensorEvent.values[2];
 
         SensorManager.getRotationMatrixFromVector(mRotationMatrix,
                 sensorEvent.values);
@@ -245,10 +238,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         float Roll =  orientationVals[2];
 
-        /*
-        Log.d("SENSOROUTPUT: ", " Yaw: " + orientationVals[0] + "\n Pitch: "
-                + orientationVals[1] + "\n Roll (not used): "
-                + orientationVals[2]);*/
 
 
         if(Roll < -85 && Roll > -95 && lastVal != 0.0f){
@@ -351,55 +340,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
             mGameManagerClient.sendGameMessage(directionMessage);
         }
-//        Log.d("X val : ", "" + sensorEvent.values[0]);
-
-
-/*
-        if (SensorManager.getRotationMatrix(m_rotationMatrix, null,
-                m_lastAccels, m_lastMagFields)) {
-            SensorManager.getOrientation(m_rotationMatrix, m_orientation);
-
-            float yaw = m_orientation[0] * 57.2957795f;
-            float pitch = m_orientation[1] * 57.2957795f;
-            float roll = m_orientation[2] * 57.2957795f;
-
-            Log.d("Yaw: ", yaw + "");
-            Log.d("Pitch: ", pitch + "");
-            Log.d("Roll: ", roll + "");
-
-        }
-
-
-        if(x > 0.3 && !lastVal.equals("One")){
-            Log.d("One", "" + x);
-            lastVal = "One";
-        }else if(x < 0.3 && x > 0.25 &&  !lastVal.equals("Two")){
-            Log.d("Two", "" + x);
-            lastVal = "Two";
-        }else if(x < 0.25 && x > 0.2 && !lastVal.equals("Three")){
-            Log.d("Three", "" + x);
-            lastVal = "Three";
-        }else if(x < 0.2 && x > 0.15 && !lastVal.equals("Four")){
-            Log.d("Four", "" + x);
-            lastVal = "Four";
-        } else if(x < 0.15 && x > 0.1 && !lastVal.equals("Five")){
-            Log.d("Five", "" + x);
-            lastVal = "Five";
-        } else if(x < 0.1 && x > 0.05 && !lastVal.equals("Six")){
-            Log.d("Six", "" + x);
-            lastVal = "Six";
-        }  else if(x < 0.05 && x > 0 && !lastVal.equals("Seven")){
-            Log.d("Seven", "" + x);
-            lastVal = "Seven";
-        } else if(x < 0 && !lastVal.equals("Eight")){
-            Log.d("Eight", "" + x);
-            lastVal = "Eight";
-        }*/
-/*
-        Log.d("SENSORCHANGED", "Roll :"+ Float.toString(sensorEvent.values[2]) +"\n"+
-                "Pitch :"+ Float.toString(sensorEvent.values[1]) +"\n"+
-                "Yaw :"+ Float.toString(sensorEvent.values[0]));
-*/
 
     }
 
@@ -423,6 +363,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         transaction.replace(R.id.main, fragment, "first");
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void disableOrientationListener(){
+        sManager.unregisterListener(this);
     }
 
     /**
