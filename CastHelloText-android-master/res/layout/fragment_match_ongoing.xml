@@ -3,14 +3,23 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:src="@drawable/hourglass9"
+        android:id="@+id/imageView"
+        android:layout_above="@+id/textView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="48dp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Match ongoing,"
         android:id="@+id/textView1"
-        android:layout_marginTop="162dp"
-        android:layout_alignParentTop="true"
+        android:layout_above="@+id/textView2"
         android:layout_centerHorizontal="true" />
 
     <TextView
@@ -19,7 +28,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="please wait!"
         android:id="@+id/textView2"
-        android:layout_below="@+id/textView1"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
     <TextView
@@ -28,9 +37,10 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Current leader:"
         android:id="@+id/textView3"
-        android:layout_marginTop="69dp"
+        android:layout_marginTop="46dp"
         android:layout_below="@+id/textView2"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignRight="@+id/textView1"
+        android:layout_alignEnd="@+id/textView1" />
 
     <TextView
         android:layout_width="wrap_content"
