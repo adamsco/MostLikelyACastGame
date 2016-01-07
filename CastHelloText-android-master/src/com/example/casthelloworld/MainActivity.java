@@ -25,7 +25,6 @@ import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.gms.cast.games.GameManagerState;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.cast.games.GameManagerClient;
@@ -44,7 +43,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
@@ -53,10 +51,6 @@ import android.support.v7.media.MediaRouter.RouteInfo;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -133,17 +127,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         lastVal = 999;
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        // When the user clicks on the button, use Android voice recognition to
-        // get text
-        /*Button voiceButton = (Button) findViewById(R.id.voiceButton);
-        voiceButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startVoiceRecognitionActivity();
-                mGameManagerClient.sendPlayerReadyRequest(null);
-            }
-        });*/
-
         // Configure Cast device discovery
         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
         mMediaRouteSelector = new MediaRouteSelector.Builder()
@@ -155,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /**
      * Android voice recognition
      */
-    private void startVoiceRecognitionActivity() {
+    public void enableOrientationListener() {
 
         sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
     }
@@ -199,7 +182,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
-        teardown(true);
+        mGameManagerClient.dispose();
+        teardown(true); 
         super.onDestroy();
     }
 
@@ -459,53 +443,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         }
                     }
                 } else {
-                    // Launch the receiver app
+                    // Set result call back
                     Cast.CastApi.launchApplication(mApiClient, getString(R.string.app_id), false)
                             .setResultCallback(new LaunchReceiverApplicationResultCallback());
-                               /*     new ResultCallback<Cast.ApplicationConnectionResult>() {
-                                        @Override
-                                        public void onResult(
-                                                ApplicationConnectionResult result) {
-                                            Status status = result.getStatus();
-                                            Log.d(TAG,
-                                                    "ApplicationConnectionResultCallback.onResult:"
-                                                            + status.getStatusCode());
-                                            if (status.isSuccess()) {
-                                                ApplicationMetadata applicationMetadata = result
-                                                        .getApplicationMetadata();
-                                                mSessionId = result.getSessionId();
-                                                String applicationStatus = result
-                                                        .getApplicationStatus();
-                                                boolean wasLaunched = result.getWasLaunched();
-                                                Log.d(TAG, "application name: "
-                                                        + applicationMetadata.getName()
-                                                        + ", status: " + applicationStatus
-                                                        + ", sessionId: " + mSessionId
-                                                        + ", wasLaunched: " + wasLaunched);
-                                                mApplicationStarted = true;
-
-                                                // Create the custom message
-                                                // channel
-                                                mHelloWorldChannel = new HelloWorldChannel();
-                                                try {
-                                                    Cast.CastApi.setMessageReceivedCallbacks(
-                                                            mApiClient,
-                                                            mHelloWorldChannel.getNamespace(),
-                                                            mHelloWorldChannel);
-                                                } catch (IOException e) {
-                                                    Log.e(TAG, "Exception while creating channel",
-                                                            e);
-                                                }
-
-                                                // set the initial instructions
-                                                // on the receiver
-                                                sendMessage(getString(R.string.instructions));
-                                            } else {
-                                                Log.e(TAG, "application could not launch");
-                                                teardown(true);
-                                            }
-                                        }
-                                    });*/
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Failed to launch application", e);
@@ -544,42 +484,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 transaction.replace(R.id.main, fragment, "first");
                                 transaction.addToBackStack(null);
                                 transaction.commit();
-                                mGameManagerClient.setListener(new DebuggerListener());
-                                // mGameManagerClient.setList
+                                mGameManagerClient.setListener(new CurveGameListener());
                             }
                         });
             } else {
                 Log.d(TAG, "Unable to launch the the game. statusCode: " + result);
-                //setSelectedDevice(null);
             }
         }
     }
 
 
-    private class DebuggerListener implements GameManagerClient.Listener {
-
-        //private TextView mTextViewLobbyState;
-        //private TextView mTextViewGameplayState;
-        //private TextView mTextViewGameData;
+    private class CurveGameListener implements GameManagerClient.Listener {
 
         @Override
         public void onStateChanged(GameManagerState currentState, GameManagerState previousState) {
             if (currentState.hasLobbyStateChanged(previousState)) {
                 Log.d(TAG, "onLobbyStateChange: " + currentState.getLobbyState());
-                //mTextViewLobbyState.setText(currentState.getLobbyState());
             }
             if (currentState.hasGameplayStateChanged(previousState)) {
                 Log.d(TAG, "onGameplayStateChanged: " + currentState);
-                //mTextViewGameplayState.setText(
-                    //    currentState.getGameplayState());
             }
             if (currentState.hasGameDataChanged(previousState)) {
                 String text = currentState.getGameData() != null
                         ? currentState.getGameData().toString() : "";
                 Log.d(TAG, "onGameDataChanged: " + text);
-                //if(text=="DEATH"){
-                //}
-                //mTextViewGameData.setText(text);
             }
         }
 
@@ -590,7 +518,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            //if (s.equals(mGameManagerClient.getLastUsedPlayerId())) {
                 try {
                     if (jsonObject.get("message").equals("LOBBY_join")){
                         Log.d("LOBBY", "join");
@@ -608,7 +535,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         transaction.commit();
                         Log.d("LOBBY", "close");
                     } else if (jsonObject.get("message").equals("You are now playing")){
-                        startVoiceRecognitionActivity();
+                        enableOrientationListener();
                         Bundle bundle = new Bundle();
                         bundle.putString("PLAYER_color", (String)jsonObject.get("PLAYER_color"));
                         Fragment fragment = new PlayFragment();
@@ -655,6 +582,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void teardown(boolean selectDefaultRoute) {
         Log.d(TAG, "teardown");
+
         if (mApiClient != null) {
             if (mApplicationStarted) {
                 if (mApiClient.isConnected() || mApiClient.isConnecting()) {

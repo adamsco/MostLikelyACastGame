@@ -118,6 +118,12 @@ public class PlayFragment extends Fragment {
         mListener = null;
     }
 
+
+    @Override
+    public void onResume() {
+        ((MainActivity) getActivity()).enableOrientationListener();
+    }
+
     @Override
     public void onPause() {
         ((MainActivity) getActivity()).disableOrientationListener();
