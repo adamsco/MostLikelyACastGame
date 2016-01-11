@@ -40,6 +40,8 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 			
 			if(userName == ''){
 				userName = 'Missing name '+playerId;
+			}else if(userName == 'Malin'){
+				userName = 'Pixel_babe_1337';
 			}
 			
 			//add player to the lobby
@@ -51,17 +53,22 @@ CurveGame.prototype.onPlayerAvailable = function(event) {
 		}else{
 			playerNotReady(index);
 		}
-	}
-	
+	}	
+	var message = { message: 'You are available' };
+	this.gameManager.sendGameMessageToPlayer(playerId, message);
+	this.gameManager.broadcastGameManagerStatus();
 };
 
 CurveGame.prototype.onPlayerReady = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is ready');
 	
-	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);	
-	var playerNumber = this.getPlayerNumber(event.playerInfo.playerId, readyPlayers);	
+	var playerId = event.playerInfo.playerId;
+	var playerNumber = this.lobbyList.indexOf(playerId); 
+	console.log('PLayer number: '+ playerNumber);
 	playerReady(playerNumber);
-	
+	var message = { message: 'You are now ready' };
+	this.gameManager.sendGameMessageToPlayer(playerId, message);	
+	this.gameManager.broadcastGameManagerStatus();
 	//Check if everyone is ready
 	this.checkIfAllReady();
 };
@@ -70,8 +77,10 @@ CurveGame.prototype.onPlayerPlaying = function(event) {
 	console.log('Player ' + event.playerInfo.playerId + ' is playing');
 	// Tell player game is about to start
 	var playerId = event.playerInfo.playerId;
-	var message = { message: 'You are now playing' };
-	this.gameManager.sendGameMessageToPlayer(playerId, message);
+	var playerNumber = this.lobbyList.indexOf(playerId); 
+	var message = { message: 'You are now playing', PLAYER_color: colorTable[playerNumber] };
+	this.gameManager.sendGameMessageToPlayer(playerId, message);	
+	this.gameManager.broadcastGameManagerStatus();
 };
 CurveGame.prototype.onPlayerDropped = function(event) {
 	//Remove player from lobby or game
@@ -79,6 +88,9 @@ CurveGame.prototype.onPlayerDropped = function(event) {
 		var playerId = event.playerInfo.playerId;
 		var playerNumber = this.lobbyList.indexOf(playerId); 
 		leaveGame(playerNumber);
+		lobbyList.splice(playerNumber,1);
+	}else{//If game is running
+		
 	}
 	console.log('Player dropped');
 };
@@ -88,6 +100,7 @@ CurveGame.prototype.onPlayerQuit = function(event) {
 		var playerId = event.playerInfo.playerId;
 		var playerNumber = this.lobbyList.indexOf(playerId); 
 		leaveGame(playerNumber);
+		lobbyList.splice(playerNumber,1);
 	}
 	
 	console.log('Player quit');
@@ -104,9 +117,11 @@ CurveGame.prototype.onGameStatusTextChanged = function() {};
 CurveGame.prototype.onGameMessageReceived = function(event) {
 	//Inputs from players
 	var message = event.requestExtraMessageData;
-	var playingPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
+	//var playingPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.PLAYING);
 	
-	playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
+	//playerNumber = this.getPlayerNumber(event.playerInfo.playerId, playingPlayers);
+	
+	playerNumber = this.lobbyList.indexOf(event.playerInfo.playerId);
 		
 	inputFromMobile(message.direction, playerNumber);
 };
@@ -118,22 +133,30 @@ CurveGame.prototype.onGameShowingInfoScreen = function() {};
 CurveGame.prototype.onLobbyOpen = function(event) {	
 	console.log('Lobby opened');
 	
-	//Set all idle player to available so they join the lobby	
+	//Send message to all idle players to let them know they can join the lobby
 	var idlePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.IDLE);
 	for (var i = 0; i < idlePlayers.length; i++) {
 		
-		var playerId = idlePlayers[i].playerId;
-		this.gameManager.updatePlayerState(playerId,cast.receiver.games.PlayerState.AVAILABLE, true);		
+		var playerId = idlePlayers[i].playerId;	
 		var message = { message: 'LOBBY_opened' };
 		this.gameManager.sendGameMessageToPlayer(playerId, message);
-	}	
+	}
+	
+	//Set all ready players to available
+	var readyPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.READY);
+	for (var i = 0; i < readyPlayers.length; i++) {
+		var playerId = readyPlayers[i].playerId;	
+		this.gameManager.updatePlayerState(playerId,cast.receiver.games.PlayerState.AVAILABLE, true);	
+	}
+	
 	this.gameManager.broadcastGameManagerStatus();
 	
 
 };
 CurveGame.prototype.onLobbyClosed = function(event) {
 	console.log('Lobby closed');
-	window.castReceiverManager.setApplicationState("A game is running");
+	window.castReceiverManager.setApplicationState("A game is running");	
+	this.gameManager.broadcastGameManagerStatus();
 };
 
 CurveGame.prototype.checkIfAllReady = function(){
@@ -159,9 +182,21 @@ CurveGame.prototype.checkIfAllReady = function(){
 	this.gameManager.broadcastGameManagerStatus();
 };
 
-CurveGame.prototype.openLobby = function(){
+CurveGame.prototype.openLobby = function(){// Call this when a game is done to begin setting up the next game
 	this.gameManager.updateLobbyState(cast.receiver.games.LobbyState.OPEN, true);
 	this.gameManager.broadcastGameManagerStatus();
+};
+
+CurveGame.prototype.updateScore = function(leaderName, score){
+	
+	
+	
+	var idlePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.IDLE);
+	for (var i = 0; i < idlePlayers.length; i++) {
+		var playerId = idlePlayers[i].playerId;
+		var message = { message: 'SCORE_update', leader: ''+ leaderName, leader_score: score, goal_score: 10};
+		this.gameManager.sendGameMessageToPlayer(playerId, message);
+	}
 };
 
 CurveGame.prototype.getPlayerNumber = function(playerId, playerList){
@@ -174,5 +209,26 @@ CurveGame.prototype.getPlayerNumber = function(playerId, playerList){
 	}
 	
 	return playerNumber;
+};
+CurveGame.prototype.updateLobbyList = function(){
+	var droppedPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.DROPPED);
+	var quitPlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.QUIT);
+	
+	for (var i = 0; i < this.lobbyList.length; i++){
+		for (var j = 0; j < droppedPlayers.length; j++) {
+			index = lobbyList.indexOf(droppedPlayers[j].playerId);
+			
+			lobbyList.splice(index,1);
+			leaveGame(index);
+		}
+		for (var j = 0; j < quitPlayers.length; j++) {
+			index = lobbyList.indexOf(quitPlayers[j].playerId);
+			
+			lobbyList.splice(index,1);
+			leaveGame(index);
+		}
+	}
+	
+
 };
 

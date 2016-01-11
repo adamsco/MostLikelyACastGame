@@ -3,10 +3,10 @@ var colorTable =["#0C5DA5", "#C6F500", "#FF3D00", "#00A383", "#FF9500", "#AD009F
 var dRatio = 0.96;
 GAME_WIDTH = window.innerWidth*dRatio;
 GAME_HEIGHT = window.innerHeight*dRatio;
-var ms = 2;
-var rs = 0.05;
-var scaleTrail = 0.6;
-var scalePlayer = 0.5;
+var ms = 7;
+var rs = 0.15;
+var scaleTrail = 1.2;
+var scalePlayer = 1.0;
 var enabled = false;
 // create an new instance of a pixi stage
 var stage;
@@ -14,7 +14,9 @@ var winCondition = 10;
 // create a renderer instance.
 var renderer;
 var renderCanvas;
-
+var pauseTime = 500;
+var runTimeBase = 1500;
+var runTimeMax = 2500;
 var playerList;
 var alive = [];
 var bunny;
@@ -25,7 +27,6 @@ var isRunning = true;
 var curveGame;
 //gameInit();
 var tails = [];
-tailTextures =[];
 
 function switchState(){
    if(document.getElementById('board').rows.length >1){
@@ -57,13 +58,13 @@ function gameInit(){
 
       loader = PIXI.loader
          .add('image1', 'img2/0C5DA5.png')
-         .add('image2', 'img/C6F500.png')
-         .add('image3', 'img/FF3D00.png')
-         .add('image4', 'img/00A383.png')
-         .add('image5', 'img/FF9500.png')
-         .add('image6', 'img/AD009F.png')
-         .add('image7', 'img/ED6B95.png')
-         .add('image8', 'img/FFFC73.png')
+         .add('image2', 'img2/C6F500.png')
+         .add('image3', 'img2/FF3D00.png')
+         .add('image4', 'img2/00A383.png')
+         .add('image5', 'img2/FF9500.png')
+         .add('image6', 'img2/AD009F.png')
+         .add('image7', 'img2/ED6B95.png')
+         .add('image8', 'img2/FFFC73.png')
          .once('complete', function(loader, resources){
             requestAnimationFrame( animate );
          })
@@ -107,7 +108,10 @@ function createPlayer(){
    var player ={
       texture: text,
       turn: 0,
-      score: 0
+      score: 0,
+      draw: false,
+      timer: false,
+      getTimer: null
    };
    playerList.push(player);
    playerList[playerList.length-1].texture.scale.x = scalePlayer;
@@ -168,8 +172,8 @@ function resize() {
    renderer.resize(Math.ceil(GAME_WIDTH * ratio),
                   Math.ceil(GAME_HEIGHT * ratio));
 }
-function didCollide(x,y,rot){
-   var col = ctx.getImageData(x+12*Math.sin(rot), y-12*Math.cos(rot),1,1).data;
+function didCollide(pos,rot){
+   var col = ctx.getImageData(pos.x+24*Math.sin(rot), pos.y-24*Math.cos(rot),1,1).data;
    if(col[0] > 0 || col[1] > 0 || col[2] > 0 || col[3] == 0){
       console.log("Its a hit!");
       console.log(col);
@@ -177,10 +181,24 @@ function didCollide(x,y,rot){
    }
    return false;
 }
+function drawTimer(pNr){
+   playerList[pNr].draw = !playerList[pNr].draw;
+   if(playerList[pNr].draw){
+      playerList[pNr].getTimer = setTimeout(function(){
+         drawTimer(pNr);
+      }, runTimeBase+Math.random()*runTimeMax);
+   }
+   else{
+      playerList[pNr].getTimer = setTimeout(function(){
+         drawTimer(pNr);
+      }, pauseTime);
+   }
+}
+
 function animatePlayer( player , count ){
-   if(player != undefined && alive[count]){
+   if(player.texture != undefined && alive[count]){
       //playercolission?
-      if(didCollide(player.position.x, player.position.y, player.rotation)){
+      if(didCollide(player.texture.position, player.texture.rotation)){
             alive[count] = false;
             addPoints();//add points to all players still alive
             var keepGoing = 0;
@@ -193,30 +211,38 @@ function animatePlayer( player , count ){
                roundEnd();
             }
       }
-         //add trail
-         str = "img/"+ colorTable[count % 8].slice(1) + ".png";
-         //console.log(str);
-         var sprite = getTexture(count % 8);
-         sprite.anchor = player.anchor;
-         //clone
-         var tempPos = JSON.parse(JSON.stringify(player.position));
-         var tempRot = JSON.parse(JSON.stringify(player.rotation));
-         sprite.rotation = tempRot
-         sprite.position.x = tempPos.x;
-         sprite.position.y = tempPos.y;
-         sprite.scale.x = scaleTrail;
-         sprite.scale.y = scaleTrail;
-         //sprite.tint = player.playerColor;
-         tails[count].addChild(sprite);
+         //init timer
+         if(player.timer == false){
+            console.log("init timer for: "+ count)
+            player.timer = true;
+            drawTimer(count);
+         }
+         if(player.draw){
+            //add trail
+            str = "img/"+ colorTable[count % 8].slice(1) + ".png";
+            //console.log(str);
+            var sprite = getTexture(count % 8);
+            sprite.anchor = player.texture.anchor;
+            //clone
+            var tempRot = {rotation: player.texture.rotation};
+            var tempPos = {x: player.texture.position.x, y: player.texture.position.y};
+
+            sprite.rotation = tempRot.rotation;
+            sprite.position = tempPos;
+            sprite.scale.x = scaleTrail;
+            sprite.scale.y = scaleTrail;
+            //sprite.tint = player.playerColor;
+            tails[count].addChild(sprite);
+         }
 
       //then move player
-      player.position.x += ms* Math.sin(player.rotation);
-      player.position.y -= ms* Math.cos(player.rotation);
+      player.texture.position.x += ms* Math.sin(player.texture.rotation);
+      player.texture.position.y -= ms* Math.cos(player.texture.rotation);
    }
 }
 function animate() {
    if(enabled){
-      requestAnimationFrame( animate );
+
       //texture for collidecheck
       view = renderCanvas.view;
       renderCanvas.render(stage);
@@ -225,7 +251,7 @@ function animate() {
       if(isRunning){
          var count = 0;
          playerList.forEach(function(player){
-            animatePlayer(player.texture, count);
+            animatePlayer(player, count);
             if(alive[count]){
                rotatePlayer(player);
             }
@@ -234,6 +260,10 @@ function animate() {
       }
       // render the stage
       renderer.render(stage);
+      //save tails as 1 img
+
+      requestAnimationFrame( animate );
+
    }
 }
 //returns the preloaded texture as a texture object
@@ -317,7 +347,15 @@ function roundEnd(){
          resetGameBoard();
       }, 4500);
    }
-
+	var leaderScore = 0;
+	var leader = "";
+	playerList.forEach(function(player){
+		if (player.score >= leaderScore){
+			leaderScore = player.score;
+			leader = document.getElementById('board').rows[count+1].cells[0].innerHTML;
+		}
+	}
+	curveGame.updateScore(leader,leaderScore);
    //setTimeout(countdown(), 3000);
 }
 function countdown(){
@@ -331,6 +369,10 @@ function resetGameBoard() {
       resetPlayer(player, count);
       tails[count] = new PIXI.ParticleContainer();
       stage.addChild(tails[count]);
+      if(player.getTimer != null){
+         clearTimeout(player.getTimer);
+      }
+
       count ++;
    });
 
@@ -341,6 +383,8 @@ function resetPlayer(player, count){
    player.texture.position.y =  0.2*GAME_HEIGHT + (Math.random() * GAME_HEIGHT*0.6);
    player.turn = 0;
    player.texture.rotation = Math.random() * 6.2;
+   player.draw = false;
+   player.timer = false;
    stage.addChild(player.texture);
 }
 function parseCol(color, toNumber) {
