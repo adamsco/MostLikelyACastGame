@@ -4,15 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.cast.games.GameManagerClient;
 
@@ -73,12 +76,10 @@ public class PlayFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        
         mGameManagerClient = MainActivity.getmGameManagerClient();
         usernameMessage = new JSONObject();
-
-        getActivity().setRequestedOrientation(
-                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //getActivity().setRequestedOrientation(
+         //       ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
     }
 
@@ -92,6 +93,20 @@ public class PlayFragment extends Fragment {
         String bgcolor = getArguments().getString("PLAYER_color");
         view.setBackgroundColor(Color.parseColor(bgcolor));
 
+        //int height = view.getWidth();
+        //int width = view.getHeight();
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        int height = display.getHeight();
+        int width = display.getHeight();
+
+        Log.d("h", "" +height);
+        Log.d("w", "" +width);
+
+
+
+        view.setLayoutParams(new RelativeLayout.LayoutParams(width, height));
+
         return view;
     }
 
@@ -103,7 +118,7 @@ public class PlayFragment extends Fragment {
     }
 
     public void onAttach(Context context) {
-        super.onAttach((Activity)context);
+        super.onAttach((Activity) context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -121,6 +136,9 @@ public class PlayFragment extends Fragment {
 
     @Override
     public void onResume() {
+
+        Log.d("onattach height", "" + getView().getHeight());
+        Log.d("onattach width", "" + getView().getWidth());
         super.onResume();
         ((MainActivity) getActivity()).enableOrientationListener();
     }
