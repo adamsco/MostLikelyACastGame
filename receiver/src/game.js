@@ -347,7 +347,15 @@ function roundEnd(){
          resetGameBoard();
       }, 4500);
    }
-	curveGame.updateScore('Jakob',getScore());
+	var leaderScore = 0;
+	var leader = "";
+	playerList.forEach(function(player){
+		if (player.score >= leaderScore){
+			leaderScore = player.score;
+			leader = document.getElementById('board').rows[count+1].cells[0].innerHTML;
+		}
+	}
+	curveGame.updateScore(leader,leaderScore);
    //setTimeout(countdown(), 3000);
 }
 function countdown(){

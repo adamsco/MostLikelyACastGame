@@ -189,13 +189,12 @@ CurveGame.prototype.openLobby = function(){// Call this when a game is done to b
 
 CurveGame.prototype.updateScore = function(leaderName, score){
 	
-	score.sort();
-	score.reverse();
+	
 	
 	var idlePlayers = this.gameManager.getPlayersInState(cast.receiver.games.PlayerState.IDLE);
 	for (var i = 0; i < idlePlayers.length; i++) {
 		var playerId = idlePlayers[i].playerId;
-		var message = { message: 'SCORE_update', leader: ''+ leaderName, leader_score: score[0], goal_score: 10};
+		var message = { message: 'SCORE_update', leader: ''+ leaderName, leader_score: score, goal_score: 10};
 		this.gameManager.sendGameMessageToPlayer(playerId, message);
 	}
 };
