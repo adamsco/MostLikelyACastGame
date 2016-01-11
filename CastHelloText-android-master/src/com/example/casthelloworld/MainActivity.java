@@ -38,6 +38,7 @@ import android.hardware.SensorManager;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Debug;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         transaction.add(R.id.main, fragment, "first");
         transaction.addToBackStack(null);
         transaction.commit();
-
+        Log.d("Start", "ONcreate");
         waiting = false;
 
         m_lastMagFields = new float[3];
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
-        mGameManagerClient.dispose();
+       // mGameManagerClient.dispose();
         teardown(true); 
         super.onDestroy();
     }
@@ -339,6 +340,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         transaction.replace(R.id.main, fragment, "first");
         transaction.addToBackStack(null);
         transaction.commit();
+        Log.d("Lobb", "closed");
     }
 
     public void lobbyOpen() {
@@ -537,14 +539,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     } else if (jsonObject.get("message").equals("You are now playing")){
                         enableOrientationListener();
                         Bundle bundle = new Bundle();
-                        bundle.putString("PLAYER_color", (String)jsonObject.get("PLAYER_color"));
+                        bundle.putString("PLAYER_color", (String) jsonObject.get("PLAYER_color"));
                         Fragment fragment = new PlayFragment();
                         fragment.setArguments(bundle);
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.main, fragment, "first");
                         transaction.addToBackStack(null);
                         transaction.commit();
-                        Log.d("LOBBY", "close");
+                        Log.d("LOBBY", "playing");
                     } else if (jsonObject.get("message").equals("LOBBY_open")){
                         waiting = false;
                         Fragment fragment = new LobbyFragment();

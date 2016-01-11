@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.casthelloworld.ConnectFragment">
+    tools:context="com.example.casthelloworld.ConnectFragment"
+    android:background="@color/abc_search_url_text_selected">
 
     <TextView
         android:layout_width="wrap_content"

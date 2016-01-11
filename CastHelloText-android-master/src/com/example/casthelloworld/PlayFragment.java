@@ -121,11 +121,13 @@ public class PlayFragment extends Fragment {
 
     @Override
     public void onResume() {
+        super.onResume();
         ((MainActivity) getActivity()).enableOrientationListener();
     }
 
     @Override
     public void onPause() {
+        super.onPause();
         ((MainActivity) getActivity()).disableOrientationListener();
     }
 

@@ -73,10 +73,10 @@ public class ConnectFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_match_ongoing, container, false);
+        View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
-        ImageView IV = (ImageView)view.findViewById(R.id.imageView);
-        IV.setBackgroundResource(R.drawable.marketing8);
+       // ImageView IV = (ImageView)view.findViewById(R.id.imageView);
+       // IV.setBackgroundResource(R.drawable.marketing8);
 
         return view;
 
