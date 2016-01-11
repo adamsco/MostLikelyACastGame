@@ -25,7 +25,6 @@ import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.gms.cast.games.GameManagerState;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.cast.games.GameManagerClient;
@@ -44,7 +43,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
@@ -53,10 +51,6 @@ import android.support.v7.media.MediaRouter.RouteInfo;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -133,17 +127,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         lastVal = 999;
         sManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        // When the user clicks on the button, use Android voice recognition to
-        // get text
-        /*Button voiceButton = (Button) findViewById(R.id.voiceButton);
-        voiceButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startVoiceRecognitionActivity();
-                mGameManagerClient.sendPlayerReadyRequest(null);
-            }
-        });*/
-
         // Configure Cast device discovery
         mMediaRouter = MediaRouter.getInstance(getApplicationContext());
         mMediaRouteSelector = new MediaRouteSelector.Builder()
@@ -155,13 +138,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /**
      * Android voice recognition
      */
-    private void startVoiceRecognitionActivity() {
-        /*
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.message_to_cast));
-        startActivityForResult(intent, REQUEST_CODE);*/
+    public void enableOrientationListener() {
 
         sManager.registerListener(this, sManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR), SensorManager.SENSOR_DELAY_GAME);
     }
@@ -205,7 +182,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
-        teardown(true);
+        mGameManagerClient.dispose();
+        teardown(true); 
         super.onDestroy();
     }
 
@@ -229,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         {
             return;
         }
-        //float x = sensorEvent.values[2];
 
         SensorManager.getRotationMatrixFromVector(mRotationMatrix,
                 sensorEvent.values);
@@ -245,10 +222,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         float Roll =  orientationVals[2];
 
-        /*
-        Log.d("SENSOROUTPUT: ", " Yaw: " + orientationVals[0] + "\n Pitch: "
-                + orientationVals[1] + "\n Roll (not used): "
-                + orientationVals[2]);*/
 
 
         if(Roll < -85 && Roll > -95 && lastVal != 0.0f){
@@ -351,55 +324,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
             mGameManagerClient.sendGameMessage(directionMessage);
         }
-//        Log.d("X val : ", "" + sensorEvent.values[0]);
-
-
-/*
-        if (SensorManager.getRotationMatrix(m_rotationMatrix, null,
-                m_lastAccels, m_lastMagFields)) {
-            SensorManager.getOrientation(m_rotationMatrix, m_orientation);
-
-            float yaw = m_orientation[0] * 57.2957795f;
-            float pitch = m_orientation[1] * 57.2957795f;
-            float roll = m_orientation[2] * 57.2957795f;
-
-            Log.d("Yaw: ", yaw + "");
-            Log.d("Pitch: ", pitch + "");
-            Log.d("Roll: ", roll + "");
-
-        }
-
-
-        if(x > 0.3 && !lastVal.equals("One")){
-            Log.d("One", "" + x);
-            lastVal = "One";
-        }else if(x < 0.3 && x > 0.25 &&  !lastVal.equals("Two")){
-            Log.d("Two", "" + x);
-            lastVal = "Two";
-        }else if(x < 0.25 && x > 0.2 && !lastVal.equals("Three")){
-            Log.d("Three", "" + x);
-            lastVal = "Three";
-        }else if(x < 0.2 && x > 0.15 && !lastVal.equals("Four")){
-            Log.d("Four", "" + x);
-            lastVal = "Four";
-        } else if(x < 0.15 && x > 0.1 && !lastVal.equals("Five")){
-            Log.d("Five", "" + x);
-            lastVal = "Five";
-        } else if(x < 0.1 && x > 0.05 && !lastVal.equals("Six")){
-            Log.d("Six", "" + x);
-            lastVal = "Six";
-        }  else if(x < 0.05 && x > 0 && !lastVal.equals("Seven")){
-            Log.d("Seven", "" + x);
-            lastVal = "Seven";
-        } else if(x < 0 && !lastVal.equals("Eight")){
-            Log.d("Eight", "" + x);
-            lastVal = "Eight";
-        }*/
-/*
-        Log.d("SENSORCHANGED", "Roll :"+ Float.toString(sensorEvent.values[2]) +"\n"+
-                "Pitch :"+ Float.toString(sensorEvent.values[1]) +"\n"+
-                "Yaw :"+ Float.toString(sensorEvent.values[0]));
-*/
 
     }
 
@@ -423,6 +347,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         transaction.replace(R.id.main, fragment, "first");
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void disableOrientationListener(){
+        sManager.unregisterListener(this);
     }
 
     /**
@@ -515,53 +443,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         }
                     }
                 } else {
-                    // Launch the receiver app
+                    // Set result call back
                     Cast.CastApi.launchApplication(mApiClient, getString(R.string.app_id), false)
                             .setResultCallback(new LaunchReceiverApplicationResultCallback());
-                               /*     new ResultCallback<Cast.ApplicationConnectionResult>() {
-                                        @Override
-                                        public void onResult(
-                                                ApplicationConnectionResult result) {
-                                            Status status = result.getStatus();
-                                            Log.d(TAG,
-                                                    "ApplicationConnectionResultCallback.onResult:"
-                                                            + status.getStatusCode());
-                                            if (status.isSuccess()) {
-                                                ApplicationMetadata applicationMetadata = result
-                                                        .getApplicationMetadata();
-                                                mSessionId = result.getSessionId();
-                                                String applicationStatus = result
-                                                        .getApplicationStatus();
-                                                boolean wasLaunched = result.getWasLaunched();
-                                                Log.d(TAG, "application name: "
-                                                        + applicationMetadata.getName()
-                                                        + ", status: " + applicationStatus
-                                                        + ", sessionId: " + mSessionId
-                                                        + ", wasLaunched: " + wasLaunched);
-                                                mApplicationStarted = true;
-
-                                                // Create the custom message
-                                                // channel
-                                                mHelloWorldChannel = new HelloWorldChannel();
-                                                try {
-                                                    Cast.CastApi.setMessageReceivedCallbacks(
-                                                            mApiClient,
-                                                            mHelloWorldChannel.getNamespace(),
-                                                            mHelloWorldChannel);
-                                                } catch (IOException e) {
-                                                    Log.e(TAG, "Exception while creating channel",
-                                                            e);
-                                                }
-
-                                                // set the initial instructions
-                                                // on the receiver
-                                                sendMessage(getString(R.string.instructions));
-                                            } else {
-                                                Log.e(TAG, "application could not launch");
-                                                teardown(true);
-                                            }
-                                        }
-                                    });*/
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Failed to launch application", e);
@@ -600,42 +484,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 transaction.replace(R.id.main, fragment, "first");
                                 transaction.addToBackStack(null);
                                 transaction.commit();
-                                mGameManagerClient.setListener(new DebuggerListener());
-                                // mGameManagerClient.setList
+                                mGameManagerClient.setListener(new CurveGameListener());
                             }
                         });
             } else {
                 Log.d(TAG, "Unable to launch the the game. statusCode: " + result);
-                //setSelectedDevice(null);
             }
         }
     }
 
 
-    private class DebuggerListener implements GameManagerClient.Listener {
-
-        //private TextView mTextViewLobbyState;
-        //private TextView mTextViewGameplayState;
-        //private TextView mTextViewGameData;
+    private class CurveGameListener implements GameManagerClient.Listener {
 
         @Override
         public void onStateChanged(GameManagerState currentState, GameManagerState previousState) {
             if (currentState.hasLobbyStateChanged(previousState)) {
                 Log.d(TAG, "onLobbyStateChange: " + currentState.getLobbyState());
-                //mTextViewLobbyState.setText(currentState.getLobbyState());
             }
             if (currentState.hasGameplayStateChanged(previousState)) {
                 Log.d(TAG, "onGameplayStateChanged: " + currentState);
-                //mTextViewGameplayState.setText(
-                    //    currentState.getGameplayState());
             }
             if (currentState.hasGameDataChanged(previousState)) {
                 String text = currentState.getGameData() != null
                         ? currentState.getGameData().toString() : "";
                 Log.d(TAG, "onGameDataChanged: " + text);
-                //if(text=="DEATH"){
-                //}
-                //mTextViewGameData.setText(text);
             }
         }
 
@@ -646,7 +518,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            //if (s.equals(mGameManagerClient.getLastUsedPlayerId())) {
                 try {
                     if (jsonObject.get("message").equals("LOBBY_join")){
                         Log.d("LOBBY", "join");
@@ -664,8 +535,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         transaction.commit();
                         Log.d("LOBBY", "close");
                     } else if (jsonObject.get("message").equals("You are now playing")){
-                        startVoiceRecognitionActivity();
+                        enableOrientationListener();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("PLAYER_color", (String)jsonObject.get("PLAYER_color"));
                         Fragment fragment = new PlayFragment();
+                        fragment.setArguments(bundle);
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(R.id.main, fragment, "first");
                         transaction.addToBackStack(null);
@@ -708,6 +582,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void teardown(boolean selectDefaultRoute) {
         Log.d(TAG, "teardown");
+
         if (mApiClient != null) {
             if (mApplicationStarted) {
                 if (mApiClient.isConnected() || mApiClient.isConnecting()) {

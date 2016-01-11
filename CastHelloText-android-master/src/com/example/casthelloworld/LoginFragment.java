@@ -2,6 +2,7 @@ package com.example.casthelloworld;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -74,8 +75,9 @@ public class LoginFragment extends Fragment {
         
         mGameManagerClient = MainActivity.getmGameManagerClient();
         usernameMessage = new JSONObject();
-        
 
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
     }
 
@@ -106,14 +108,6 @@ public class LoginFragment extends Fragment {
                 } else if ( mGameManagerClient.getCurrentState().getLobbyState() == mGameManagerClient.LOBBY_STATE_OPEN){
                     ((MainActivity) getActivity()).lobbyOpen();
                 }
-            }
-        });
-
-        Button readyButton = (Button) view.findViewById(R.id.readyButton);
-        readyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mGameManagerClient.sendPlayerReadyRequest(null);
             }
         });
 

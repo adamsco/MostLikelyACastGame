@@ -2,12 +2,15 @@ package com.example.casthelloworld;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 
 /**
@@ -59,13 +62,24 @@ public class ConnectFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_connect, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_match_ongoing, container, false);
+
+        ImageView IV = (ImageView)view.findViewById(R.id.imageView);
+        IV.setBackgroundResource(R.drawable.marketing8);
+
+        return view;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

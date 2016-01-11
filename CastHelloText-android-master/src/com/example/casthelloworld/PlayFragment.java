@@ -2,6 +2,8 @@ package com.example.casthelloworld;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -74,10 +76,12 @@ public class PlayFragment extends Fragment {
         
         mGameManagerClient = MainActivity.getmGameManagerClient();
         usernameMessage = new JSONObject();
-        
 
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,8 +89,8 @@ public class PlayFragment extends Fragment {
         // Inflate the layout for this fragment
 
         final View view = inflater.inflate(R.layout.fragment_play, container, false);
-
-        Button loginButton = (Button) view.findViewById(R.id.loginButton);
+        String bgcolor = getArguments().getString("PLAYER_color");
+        view.setBackgroundColor(Color.parseColor(bgcolor));
 
         return view;
     }
@@ -112,6 +116,17 @@ public class PlayFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+
+    @Override
+    public void onResume() {
+        ((MainActivity) getActivity()).enableOrientationListener();
+    }
+
+    @Override
+    public void onPause() {
+        ((MainActivity) getActivity()).disableOrientationListener();
     }
 
     /**
