@@ -515,7 +515,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         @Override
         public void onGameMessageReceived(String s, JSONObject jsonObject) {
-            int playFragmentCalls = 0;
             try {
                 Log.d("ONMSGRECIEVE", (String) jsonObject.get("message"));
             } catch (JSONException e) {
@@ -538,8 +537,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         transaction.commit();
                         Log.d("LOBBY", "close");
                     } else if (jsonObject.get("message").equals("You are now playing")){
-                        playFragmentCalls++;
-                        if(playFragmentCalls < 2) {
                             enableOrientationListener();
                             Bundle bundle = new Bundle();
                             bundle.putString("PLAYER_color", (String) jsonObject.get("PLAYER_color"));
@@ -550,7 +547,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             transaction.addToBackStack(null);
                             transaction.commit();
                             Log.d("LOBBY", "playing");
-                        }
+
                     } else if (jsonObject.get("message").equals("LOBBY_open")){
                         waiting = false;
                         Fragment fragment = new LobbyFragment();

@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="bgrn with 14 out of 25 points"
+        android:text="..."
         android:id="@+id/standingsText"
         android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true" />
